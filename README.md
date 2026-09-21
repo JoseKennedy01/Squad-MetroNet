@@ -249,13 +249,16 @@ pytest
 
 **Squad 1 — MetroNet**
 
-| Integrante | Função |
+| Integrante         | Função |
 |---|---|
-| Nome | A definir |
-| Nome | A definir |
-| Nome | A definir |
-| Nome | A definir |
-| Nome | A definir |
+| José Kennedy       | Código |
+| Mateus Souza       | Código |
+| Nicolas Gabriel    | Código |
+| Erysson Roberto    | Código |
+| Marcus Vinícius    | Artigo |
+| Miguel Gonçalves   | Artigo |
+| Leonardo Junior    | Artigo |
+| David Dias         | Artigo |
 
 ---
 
