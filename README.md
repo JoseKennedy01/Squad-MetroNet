@@ -2,7 +2,7 @@
 
 > **Sistema de Roteamento Inteligente para Mobilidade Urbana**
 
-Projeto desenvolvido pelo **Squad 1** como parte da plataforma conceitual **UrbanTech**, na disciplina de **Matemática Discreta e Algoritmos**.
+Projeto desenvolvido pelo **Squad 1** como parte da plataforma conceitual **UrbanTech**, na disciplina de **Matemática Computacional**.
 
 O MetroNet tem como objetivo representar uma rede de transporte urbano utilizando **grafos** e aplicar algoritmos para encontrar caminhos eficientes entre diferentes pontos da cidade.
 
@@ -283,6 +283,6 @@ pytest
 
 ## 📄 Licença
 
-Este projeto está sendo desenvolvido para fins acadêmicos no contexto da disciplina de **Matemática Discreta e Algoritmos**.
+Este projeto está sendo desenvolvido para fins acadêmicos no contexto da disciplina de **Matemática Computacional**.
 
 A licença do projeto será definida posteriormente.
