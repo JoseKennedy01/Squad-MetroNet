@@ -57,23 +57,88 @@ Com lista de adjacência, a BFS visita cada ponto alcançável e examina as cone
 
 `V` representa o número de pontos e `E`, o número de conexões. Em um grafo não direcionado, cada conexão aparece nas listas de adjacência dos dois extremos, mas isso não altera a ordem de crescimento da complexidade.
 
+
 ## 4. Busca em profundidade — DFS
 
-**Estado: planejada; ainda não implementada.**
+**Estado: implementada e testada.**
 
 A busca em profundidade (DFS, do inglês *Depth-First Search*) explora um caminho o máximo possível antes de voltar e seguir por outra conexão.
 
-Assim como a BFS, a DFS pode ser usada para explorar a rede e verificar pontos alcançáveis. Porém, ela não garante encontrar um caminho com o menor número de conexões nem o caminho de menor custo.
+Assim como a BFS, a DFS permite explorar a rede e verificar quais pontos podem ser alcançados a partir de uma origem. Entretanto, não garante encontrar o caminho com o menor número de conexões nem o caminho de menor custo.
 
-Sua implementação deverá manter um conjunto de pontos visitados para evitar ciclos. Com lista de adjacência, sua complexidade esperada é `O(V + E)` no pior caso. A estrutura de apoio — pilha explícita ou recursão — será registrada quando a implementação for definida.
+### Estruturas utilizadas
+
+- **Pilha:** controla os pontos que ainda serão explorados. O último ponto inserido é o primeiro a ser retirado.
+- **Conjunto de visitados:** evita explorar repetidamente os mesmos pontos e impede que ciclos provoquem buscas intermináveis.
+- **Dicionário de predecessores:** registra de qual ponto cada ponto foi alcançado, permitindo reconstruir o caminho encontrado.
+
+### Funcionamento
+
+1. Verifica se a origem e o destino estão cadastrados no grafo.
+2. Inicializa a pilha com a origem.
+3. Marca os pontos descobertos para evitar inserções repetidas.
+4. Retira um ponto da pilha e consulta suas conexões.
+5. Adiciona à pilha os vizinhos ainda não descobertos e registra seus predecessores.
+6. Quando o destino é encontrado, reconstrói o caminho a partir do dicionário de predecessores.
+7. Se o destino não puder ser alcançado, retorna `None`.
+
+A função `busca_profundidade(grafo, origem, destino)`, localizada em `src/algorithms/busca_profundidade.py`, retorna uma lista de identificadores quando encontra um caminho. Quando origem e destino são iguais, retorna uma lista contendo apenas esse ponto. Se algum dos pontos não estiver cadastrado, gera `ValueError`.
+
+A DFS não utiliza os pesos para decidir qual caminho explorar. Sua finalidade é encontrar um caminho válido, e não necessariamente o mais curto ou barato. Quando existem várias rotas possíveis, o caminho encontrado depende da ordem de exploração dos vizinhos.
+
+### Complexidade
+
+Considerando a representação por lista de adjacência:
+
+- **Tempo:** `O(V + E)` no pior caso.
+- **Espaço adicional:** `O(V)` para os pontos visitados, os predecessores e a estrutura de exploração.
+
+`V` representa a quantidade de pontos e `E`, a quantidade de conexões. Cada ponto é descoberto uma vez e as conexões dos pontos alcançados são examinadas durante a busca.
+
+### Testes relacionados
+
+Os testes de `tests/test_busca_profundidade.py` verificam caminhos diretos e indiretos, origem igual ao destino, ausência de caminho, pontos inexistentes, grafos direcionados, ciclos, grafo vazio, ponto isolado, ramificações e validade das conexões do caminho retornado.
+
 
 ## 5. Algoritmo de Dijkstra
 
-**Estado: planejado; ainda não implementado.**
+**Estado: implementado e testado na cópia integrada de revisão.**
 
-Dijkstra será utilizado para encontrar um caminho cujo custo total seja mínimo. Diferentemente da BFS e da DFS, esse algoritmo compara os pesos das conexões.
+Dijkstra encontra um caminho de menor custo acumulado entre a origem e o destino. Ao contrário da BFS e da DFS, ele usa os pesos das conexões para escolher qual ponto explorar em seguida. O algoritmo só é correto com pesos não negativos; a classe `Grafo` rejeita pesos negativos e permite peso zero.
 
-A implementação do MetroNet rejeita pesos negativos e permite pesos zero, atendendo à restrição de Dijkstra de operar com pesos não negativos. A estrutura utilizada para selecionar o próximo ponto de menor custo influenciará a análise de complexidade. Essa escolha e a respectiva análise serão registradas junto à implementação.
+**Arquivo:** `src/algorithms/dijkstra.py`.
+
+### Estruturas utilizadas
+
+- **Fila de prioridade (`heapq`):** fornece primeiro o ponto com menor custo acumulado conhecido.
+- **Dicionário de distâncias:** guarda o melhor custo conhecido da origem até cada ponto.
+- **Dicionário de predecessores:** registra o ponto anterior para reconstruir a rota.
+
+`heapq` faz parte da biblioteca padrão do Python. Quando uma distância melhora, o algoritmo adiciona uma nova entrada à heap; entradas antigas são ignoradas quando retiradas.
+
+### Funcionamento
+
+1. Verifica se origem e destino estão cadastrados e normaliza espaços externos nos identificadores.
+2. Define custo zero para a origem e inicia a fila de prioridade.
+3. Retira da fila o ponto com menor custo conhecido.
+4. Soma o custo atual ao peso de cada conexão e atualiza a distância e o predecessor quando encontra uma rota melhor.
+5. Para quando o destino é retirado como menor custo da fila, ou quando a fila se esvazia.
+6. Reconstrói a rota seguindo os predecessores do destino até a origem.
+
+A função `dijkstra(grafo, origem, destino)` retorna `(caminho, custo_total)`. Se os pontos forem válidos mas não houver rota, retorna `None`. Se origem e destino forem iguais, retorna `([origem], 0)`. Um ponto inexistente gera `ValueError`.
+
+### Complexidade
+
+Com a lista de adjacência e a heap binária de `heapq` usada pela implementação:
+
+- **Tempo:** `O((V + E) log V)` para o grafo simples utilizado pelo projeto.
+- **Espaço auxiliar:** `O(V + E)`, incluindo entradas repetidas temporárias na heap.
+
+A justificativa detalhada está em `docs/06_complexidade.md`. Esses limites são teóricos; não substituem as medições experimentais exigidas pela especificação.
+
+### Testes relacionados
+
+`tests/test_dijkstra.py` verifica caminho direto e indireto, escolha da rota mais barata, empate de custos, origem igual ao destino, destino inacessível, pontos inexistentes, direção das conexões, peso zero, custo decimal e soma dos pesos ao longo de rotas com várias conexões.
 
 ## 6. Comparação dos algoritmos
 
@@ -88,10 +153,10 @@ BFS e Dijkstra resolvem problemas diferentes: a BFS minimiza a quantidade de con
 ## 7. Relação com os requisitos
 
 - **RF05:** executar BFS — atendido pela busca em largura.
-- **RF06:** executar DFS — pendente de implementação.
-- **RF07:** executar Dijkstra — pendente de implementação.
-- **RF08:** exibir o caminho encontrado — a BFS retorna a sequência de pontos; a interface poderá apresentá-la.
-- **RF09:** informar o custo total — será atendido com o cálculo associado ao caminho de Dijkstra.
-- **RF10:** informar quando não existir caminho — a BFS retorna `None` quando origem e destino existem, mas não são conectados por uma rota.
+- **RF06:** executar DFS — atendido pela busca em profundidade implementada e testada.
+- **RF07:** executar Dijkstra — implementado em `src/algorithms/dijkstra.py`.
+- **RF08:** exibir o caminho encontrado — BFS, DFS e Dijkstra retornam a sequência de pontos; uma interface ou demonstração deve apresentar esse retorno.
+- **RF09:** informar o custo total — Dijkstra retorna o custo acumulado junto com o caminho.
+- **RF10:** informar quando não existir caminho — os três algoritmos retornam `None` quando os pontos existem, mas não há rota.
 
 Para um caminho retornado como lista, o número de conexões percorridas é `quantidade de pontos no caminho - 1`. O custo total de uma rota ponderada é a soma dos pesos das conexões percorridas.
