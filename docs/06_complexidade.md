@@ -75,8 +75,67 @@ Dijkstra requer pesos não negativos. A classe `Grafo` rejeita pesos negativos e
 
 As complexidades são limites teóricos para a representação e implementação atuais. Não são medições de velocidade.
 
-## 8. Análise experimental pendente
 
-O PDF pede comparar a análise teórica com medições de tempo e memória e produzir gráficos, incluindo profiling com `cProfile` (p. 4–5, p. 8 e p. 10). Essa etapa ainda não está registrada como executada neste documento.
+## 8. Análise experimental
 
-Para uma comparação válida, deve-se definir conjuntos de grafos determinísticos de tamanhos diferentes, executar os algoritmos em condições equivalentes, registrar as medidas e explicar as limitações dos resultados. Os tempos da suíte `pytest` informados em `docs/08_resultados.md` medem a execução dos testes e não devem ser apresentados como benchmark dos algoritmos.
+### 8.1. Metodologia
+
+A análise experimental foi realizada com redes sintéticas geradas de forma determinística, permitindo repetir os experimentos com os mesmos dados.
+
+Foram utilizadas três redes:
+
+| Quantidade de pontos (V) | Quantidade de conexões (E) |
+|---:|---:|
+| 100 | 197 |
+| 500 | 997 |
+| 1.000 | 1.997 |
+
+Os algoritmos BFS, DFS e Dijkstra foram executados com a mesma rede, origem e destino para cada tamanho testado.
+
+Para medir o tempo, cada algoritmo foi executado 15 vezes por tamanho de rede. O resultado registrado corresponde à mediana dos tempos obtidos. Uma execução inicial de aquecimento foi realizada antes das medições.
+
+O pico de memória rastreada foi medido separadamente com `tracemalloc`, evitando incluir o custo do rastreamento nas medições de tempo.
+
+O script `reports/profiling/benchmark_algoritmos.py` gera os resultados em CSV e os gráficos comparativos. O script `reports/profiling/perfil_algoritmos.py` complementa a análise com informações de perfil de execução obtidas por `cProfile`.
+
+### 8.2. Resultados de tempo
+
+| Pontos | BFS (s) | DFS (s) | Dijkstra (s) |
+|---:|---:|---:|---:|
+| 100 | 0,00005030 | 0,00004520 | 0,00007800 |
+| 500 | 0,00032760 | 0,00026620 | 0,00053810 |
+| 1.000 | 0,00066620 | 0,00044560 | 0,00084930 |
+
+Nas redes testadas, a DFS apresentou a menor mediana de tempo nas três configurações. Os tempos dos três algoritmos aumentaram conforme o tamanho da rede cresceu.
+
+Esse resultado descreve apenas os experimentos realizados. Não significa que a DFS seja sempre mais rápida, pois o desempenho depende da estrutura do grafo, da ordem de exploração e da localização do destino.
+
+### 8.3. Resultados de memória
+
+| Pontos | BFS (KiB) | DFS (KiB) | Dijkstra (KiB) |
+|---:|---:|---:|---:|
+| 100 | 13,74 | 13,32 | 8,06 |
+| 500 | 54,15 | 52,45 | 37,58 |
+| 1.000 | 76,34 | 72,26 | 77,24 |
+
+A medição representa o pico de memória rastreada pelo `tracemalloc` durante uma execução do algoritmo. Não representa o consumo total de memória do processo Python.
+
+Na rede de 1.000 pontos, Dijkstra apresentou o maior pico de memória entre os três algoritmos. Entretanto, os resultados não permitem concluir que esse comportamento ocorrerá em todas as redes.
+
+### 8.4. Perfil de execução
+
+O `cProfile` foi utilizado para registrar chamadas de funções e auxiliar na identificação das operações executadas pelos algoritmos.
+
+Nos relatórios, aparecem chamadas relacionadas à busca de vizinhos e à validação de identificadores do grafo. Em Dijkstra, também aparecem operações de inserção e remoção da fila de prioridade, implementada com `heapq`.
+
+O perfilador adiciona custo à execução. Por isso, os tempos obtidos com `cProfile` não devem ser comparados diretamente com as medianas do benchmark.
+
+### 8.5. Limitações
+
+Os experimentos utilizaram redes sintéticas e três tamanhos de entrada. Portanto, os resultados não representam necessariamente o desempenho em uma rede real de transporte.
+
+Os tempos são muito pequenos e podem sofrer influência do ambiente de execução. A mediana de 15 medições reduz a influência de variações isoladas, mas não elimina todos os fatores externos.
+
+A memória foi observada por meio de alocações rastreadas pelo Python, e não por uma ferramenta de medição de memória total do processo.
+
+A análise experimental complementa as complexidades teóricas apresentadas nas seções anteriores, mas não as substitui.
