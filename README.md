@@ -285,3 +285,51 @@ Na cópia integrada formada pelos ZIPs recebidos, a última execução apresento
 Este projeto foi desenvolvido para fins acadêmicos no contexto da disciplina de **Matemática Computacional**.
 
 A licença MIT está especificada no arquivo `LICENSE`.
+
+---
+
+## Atualização complementar — resultados reunidos da equipe 
+
+Esta seção complementa o registro anterior sem substituir seu conteúdo. Os resultados abaixo vêm de execuções e snapshots diferentes; por isso, não devem ser somados nem tratados como uma única execução.
+
+### Testes automatizados
+
+Na cópia do repositório conferida em 26/10/2026, a suíte completa apresentou **67 testes aprovados em 0,62 segundo**. O pytest exibiu um aviso por não conseguir gravar o cache em `.pytest_cache`, mas não houve falha de teste.
+
+A suíte coletada nessa cópia se distribui assim:
+
+| Área | Casos coletados |
+|---|---:|
+| Aplicação de terminal | 4 |
+| BFS | 10 |
+| DFS | 13 |
+| Dijkstra | 12 |
+| Grafo e validações | 16 |
+| Serviços de roteamento | 12 |
+| **Total** | **67** |
+
+O integrante responsável pela DFS informou **13 testes específicos da DFS aprovados**. O integrante responsável pelo Dijkstra informou **12 testes específicos do Dijkstra aprovados em 0,13 segundo**. Esses testes já estão incluídos na contagem da suíte integrada de 67; não devem ser somados novamente.
+
+Também foi informado um resultado de **77 testes aprovados em 0,24 segundo** para uma versão mais recente. Esse número não foi reproduzido na cópia conferida nesta data, que coletou 67 casos. Ele fica registrado como resultado de outro snapshot e precisa ser associado à versão correspondente antes de ser apresentado como resultado da suíte atual.
+
+### Experimentos de desempenho informados pela equipe
+
+A equipe informou a geração de redes determinísticas e conectadas com estas quantidades:
+
+| Pontos | Conexões |
+|---:|---:|
+| 100 | 197 |
+| 500 | 997 |
+| 1.000 | 1.997 |
+
+Também foram informadas 15 medições de tempo por algoritmo e tamanho de rede, após aquecimento, resumidas pela mediana:
+
+| Pontos | BFS (s) | DFS (s) | Dijkstra (s) |
+|---:|---:|---:|---:|
+| 100 | 0,00005030 | 0,00004520 | 0,00007800 |
+| 500 | 0,00032760 | 0,00026620 | 0,00053810 |
+| 1.000 | 0,00066620 | 0,00044560 | 0,00084930 |
+
+Nessas redes e condições relatadas, a DFS apresentou a menor mediana e Dijkstra a maior. Essa observação se limita aos casos medidos e não garante a mesma ordem para outras redes. A equipe também informou a medição separada do pico de memória com `tracemalloc`, que acompanha alocações rastreadas pelo Python e não equivale ao uso total de memória do processo.
+
+**Estado dos artefatos nesta cópia:** não foram encontrados os módulos e resultados citados pela equipe — `src/data/gerar_rede_sintetica.py`, `reports/profiling/benchmark_algoritmos.py`, `reports/profiling/perfil_algoritmos.py`, `reports/profiling/resultados_benchmark.csv`, os gráficos ou os arquivos `.prof`. Portanto, os comandos para reproduzir os experimentos e os valores de memória ainda não estão confirmados aqui. A equipe informou que o profiling usa `cProfile`/`pstats` e gera perfis para três algoritmos em três tamanhos; os tempos do perfilador incluem sobrecarga e não são diretamente comparáveis às medianas do benchmark.
