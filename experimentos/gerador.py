@@ -1,5 +1,6 @@
-import random 
+import random
 from src.models.grafo import Grafo
+
 
 def gerar_grafo(n_pontos, n_extra, semente=42):
 
@@ -10,15 +11,16 @@ def gerar_grafo(n_pontos, n_extra, semente=42):
     for nome in nomes:
         grafo.adicionar_ponto(nome)
 
-    for i in range(n_pontos):
+    for i in range(n_pontos - 1):
         grafo.adicionar_conexao(nomes[i], nomes[i + 1], rng.randint(1, 10))
 
     adicionadas = 0
     while adicionadas < n_extra:
-        a, b = rng.sample(nome, 2)
+        a, b = rng.sample(nomes, 2)
         try:
-            grafo.adicionar_conexao(a, b, rng.radint(1, 10))
-            adicionadas +=1
+            grafo.adicionar_conexao(a, b, rng.randint(1, 10))
+            adicionadas += 1
         except ValueError:
-            pass
+            pass    
+
     return grafo, nomes
