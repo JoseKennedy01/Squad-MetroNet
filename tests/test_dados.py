@@ -136,6 +136,59 @@ def test_rejeita_cabecalho_com_colunas_fora_da_ordem(tmp_path):
     with pytest.raises(ValueError, match="cabeçalho"):
         carregar_rede(caminho)
 
+def test_aceita_cabecalho_com_espacos(tmp_path):
+    # Cria um CSV com espaços ao redor dos nomes das colunas.
+    caminho = tmp_path / "rede.csv"
+    caminho.write_text(
+        " origem , destino , peso \nA,B,2\n",
+        encoding="utf-8",
+    )
+
+    # O carregador deve normalizar o cabeçalho e ler a conexão.
+    grafo = carregar_rede(caminho)
+
+    assert grafo.quantidade_conexoes() == 1
+    assert grafo.obter_vizinhos("A") == [("B", 2.0)]
+
+
+def test_rejeita_linha_com_campos_ausentes(tmp_path):
+    # Cria uma linha com menos campos do que o cabeçalho exige.
+    caminho = tmp_path / "rede.csv"
+    criar_csv(caminho, [["A", "B"]])
+
+    # O campo de peso ausente deve ser tratado como um campo vazio.
+    with pytest.raises(ValueError, match="campos não podem ficar vazios"):
+        carregar_rede(caminho)
+
+
+def test_remove_espacos_dos_identificadores_csv(tmp_path):
+    # Inclui espaços extras nos identificadores da conexão.
+    caminho = tmp_path / "rede.csv"
+    criar_csv(caminho, [[" A ", " B ", "2"]])
+
+    # Os identificadores devem ser normalizados antes do cadastro.
+    grafo = carregar_rede(caminho)
+
+    assert grafo.obter_pontos() == ["A", "B"]
+    assert grafo.obter_vizinhos("A") == [("B", 2.0)]
+
+
+def test_mensagem_de_erro_indica_linha_correta(tmp_path):
+    # A conexão duplicada está na quarta linha, contando o cabeçalho.
+    caminho = tmp_path / "rede.csv"
+    criar_csv(
+        caminho,
+        [
+            ["A", "B", "2"],
+            ["B", "C", "3"],
+            ["B", "A", "2"],
+        ],
+    )
+
+    # O erro deve indicar a linha em que a duplicação foi encontrada.
+    with pytest.raises(ValueError, match=r"Linha 4: conexão inválida"):
+        carregar_rede(caminho)
+
 @pytest.mark.parametrize("quantidade", [0, -1, -10, 1.5, "5", True])
 def test_rejeita_quantidade_de_pontos_invalida(quantidade):
     with pytest.raises(ValueError, match="inteiro positivo"):
@@ -172,3 +225,34 @@ def test_gera_rede_com_dois_pontos():
     assert grafo.obter_pontos() == ["EST001", "EST002"]
     assert grafo.quantidade_conexoes() == 1
     assert grafo.obter_vizinhos("EST001") == [("EST002", 1.0)]
+
+def test_gera_rede_com_pesos_deterministicos():
+    # Gera uma rede pequena para conferir os pesos definidos pelo algoritmo.
+    grafo = gerar_rede_sintetica(4)
+
+    # Confere os pesos das conexões da cadeia principal.
+    assert grafo.obter_vizinhos("EST001") == [
+        ("EST002", 1.0),
+        ("EST003", 4.0),
+    ]
+    assert grafo.obter_vizinhos("EST002") == [
+        ("EST001", 1.0),
+        ("EST003", 2.0),
+        ("EST004", 5.0),
+    ]
+
+def test_gera_rede_maior_com_quantidade_esperada_de_conexoes():
+    # Uma rede com 100 pontos deve continuar conectada e ter 197 conexões.
+    grafo = gerar_rede_sintetica(100)
+
+    assert grafo.quantidade_pontos() == 100
+    assert grafo.quantidade_conexoes() == 197
+
+def test_geracao_repetida_preserva_pesos_e_vizinhos():
+    # Gera duas redes com a mesma entrada para comparar toda a estrutura.
+    primeira = gerar_rede_sintetica(10)
+    segunda = gerar_rede_sintetica(10)
+
+    # Compara as listas de vizinhos, que incluem os pesos das conexões.
+    for ponto in primeira.obter_pontos():
+        assert primeira.obter_vizinhos(ponto) == segunda.obter_vizinhos(ponto)

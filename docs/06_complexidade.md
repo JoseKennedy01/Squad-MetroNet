@@ -102,21 +102,19 @@ O script `reports/profiling/benchmark_algoritmos.py` gera os resultados em CSV e
 
 | Pontos | BFS (s) | DFS (s) | Dijkstra (s) |
 |---:|---:|---:|---:|
-| 100 | 0,00005030 | 0,00004520 | 0,00007800 |
-| 500 | 0,00032760 | 0,00026620 | 0,00053810 |
-| 1.000 | 0,00066620 | 0,00044560 | 0,00084930 |
+| 100 | 0,00004730 | 0,00004040 | 0,00007690 |
+| 500 | 0,00025370 | 0,00034030 | 0,00042200 |
+| 1.000 | 0,00050800 | 0,00042190 | 0,00079610 |
 
-Nas redes testadas, a DFS apresentou a menor mediana de tempo nas três configurações. Os tempos dos três algoritmos aumentaram conforme o tamanho da rede cresceu.
-
-Esse resultado descreve apenas os experimentos realizados. Não significa que a DFS seja sempre mais rápida, pois o desempenho depende da estrutura do grafo, da ordem de exploração e da localização do destino.
+Nas redes testadas, a DFS apresentou a menor mediana de tempo nas configurações de 100 e 1.000 pontos, enquanto a BFS apresentou a menor mediana na rede de 500 pontos. Dijkstra apresentou a maior mediana nas três configurações. Os tempos observados aumentaram conforme o tamanho da rede cresceu, embora as diferenças entre os algoritmos variassem de acordo com a configuração.
 
 ### 8.3. Resultados de memória
 
 | Pontos | BFS (KiB) | DFS (KiB) | Dijkstra (KiB) |
 |---:|---:|---:|---:|
 | 100 | 13,74 | 13,32 | 8,06 |
-| 500 | 54,15 | 52,45 | 37,58 |
-| 1.000 | 76,34 | 72,26 | 77,24 |
+| 500 | 54,15 | 52,45 | 37,60 |
+| 1.000 | 76,34 | 72,26 | 77,27 |
 
 A medição representa o pico de memória rastreada pelo `tracemalloc` durante uma execução do algoritmo. Não representa o consumo total de memória do processo Python.
 

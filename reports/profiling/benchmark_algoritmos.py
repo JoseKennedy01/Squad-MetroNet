@@ -10,52 +10,80 @@ from src.algorithms.dijkstra import dijkstra
 from src.data.gerar_rede_sintetica import gerar_rede_sintetica
 
 DIRETORIO_RELATORIOS = Path(__file__).resolve().parent
+DIRETORIO_GRAFICOS = DIRETORIO_RELATORIOS.parent / "figures" # Define a pasta específica para armazenar os gráficos.
 TAMANHOS_REDE = [100, 500, 1000]
 REPETICOES = 15
+REPETICOES_MEMORIA = 5
+
 ALGORITMOS = [
     ("BFS", busca_largura),
     ("DFS", busca_profundidade),
     ("Dijkstra", dijkstra),
 ]
 
+def validar_resultado(resultado, origem, destino, nome_algoritmo):
+    # O Dijkstra pode retornar (caminho, custo); BFS e DFS podem retornar o caminho.
+    if (
+        isinstance(resultado, tuple)
+        and len(resultado) == 2
+        and isinstance(resultado[0], (list, tuple))
+    ):
+        caminho = resultado[0]
+    else:
+        caminho = resultado
 
-def medir_tempo(algoritmo, grafo, origem, destino):
-    # Calcula a mediana dos tempos de execução.
+    # Rejeita resultados ausentes, vazios ou que não representem um caminho.
+    if not isinstance(caminho, (list, tuple)) or not caminho:
+        raise RuntimeError(
+            f"{nome_algoritmo} não retornou um caminho válido."
+        )
+
+    # Confirma que o caminho liga os pontos solicitados.
+    if caminho[0] != origem or caminho[-1] != destino:
+        raise RuntimeError(
+            f"{nome_algoritmo} retornou um caminho com origem ou destino incorreto."
+        )
+
+def medir_tempo(algoritmo, nome_algoritmo, grafo, origem, destino):
+    # Executa um aquecimento e também valida o resultado dessa execução.
+    resultado = algoritmo(grafo, origem, destino)
+    validar_resultado(resultado, origem, destino, nome_algoritmo)
+
     tempos = []
-
-    algoritmo(grafo, origem, destino)  # Aquecimento inicial.
 
     for _ in range(REPETICOES):
         inicio = time.perf_counter()
         resultado = algoritmo(grafo, origem, destino)
         fim = time.perf_counter()
 
+        # Valida o resultado fora do intervalo cronometrado.
         tempos.append(fim - inicio)
+        validar_resultado(resultado, origem, destino, nome_algoritmo)
 
-        if resultado is None:
-            raise RuntimeError("O algoritmo não encontrou um caminho.")
-
+    # A mediana reduz a influência de medições excepcionalmente altas ou baixas.
     return statistics.median(tempos)
 
+def medir_memoria(algoritmo, nome_algoritmo, grafo, origem, destino):
+    # Repete a medição para reduzir a dependência de uma única execução.
+    picos_kib = []
 
-def medir_memoria(algoritmo, grafo, origem, destino):
-    # Mede o pico de memória rastreada durante uma execução.
-    tracemalloc.start()
+    for _ in range(REPETICOES_MEMORIA):
+        tracemalloc.start()
 
-    try:
-        resultado = algoritmo(grafo, origem, destino)
-        _, pico_bytes = tracemalloc.get_traced_memory()
-    finally:
-        tracemalloc.stop()
+        try:
+            resultado = algoritmo(grafo, origem, destino)
+            _, pico_bytes = tracemalloc.get_traced_memory()
+        finally:
+            # Encerra o rastreamento mesmo quando o algoritmo gera uma exceção.
+            tracemalloc.stop()
 
-    if resultado is None:
-        raise RuntimeError("O algoritmo não encontrou um caminho.")
+        validar_resultado(resultado, origem, destino, nome_algoritmo)
+        picos_kib.append(pico_bytes / 1024)
 
-    return pico_bytes / 1024
-
+    return statistics.median(picos_kib)
 
 def salvar_csv(resultados):
-    # Salva os resultados em formato CSV.
+    # Mantém o nome do arquivo e as colunas esperadas pelos relatórios.
     arquivo_csv = DIRETORIO_RELATORIOS / "resultados_benchmark.csv"
 
     colunas = [
@@ -79,8 +107,8 @@ def salvar_csv(resultados):
     print(f"\nCSV salvo em: {arquivo_csv}")
 
 def gerar_graficos(resultados):
-    # Gera gráficos de tempo e memória.
-    for campo, titulo, eixo_y, nome_arquivo in [
+    # Preserva os gráficos de tempo e memória utilizados no projeto.
+    configuracoes = [
         (
             "mediana_tempo_segundos",
             "Tempo de execução dos algoritmos",
@@ -93,7 +121,9 @@ def gerar_graficos(resultados):
             "Pico de memória (KiB)",
             "memoria_algoritmos.png",
         ),
-    ]:
+    ]
+
+    for campo, titulo, eixo_y, nome_arquivo in configuracoes:
         plt.figure(figsize=(9, 5))
 
         for nome_algoritmo, _ in ALGORITMOS:
@@ -119,7 +149,7 @@ def gerar_graficos(resultados):
         plt.grid(True)
         plt.tight_layout()
 
-        caminho = DIRETORIO_RELATORIOS / nome_arquivo
+        caminho = DIRETORIO_GRAFICOS / nome_arquivo # Salva o gráfico na pasta destinada às figuras do projeto.
         plt.savefig(caminho, dpi=150)
         plt.close()
 
@@ -128,17 +158,26 @@ def gerar_graficos(resultados):
 def main():
     resultados = []
 
-    for quantidade in TAMANHOS_REDE:
+    for indice_rede, quantidade in enumerate(TAMANHOS_REDE):
         grafo = gerar_rede_sintetica(quantidade)
         origem = "EST001"
         destino = f"EST{quantidade:03d}"
+        quantidade_conexoes = grafo.quantidade_conexoes()
 
         print(f"\nRede com {quantidade} pontos")
-        print(f"Conexões: {grafo.quantidade_conexoes()}")
+        print(f"Conexões: {quantidade_conexoes}")
 
-        for nome, algoritmo in ALGORITMOS:
+        # Alterna a ordem inicial entre as redes para reduzir efeitos de ordem.
+        deslocamento = indice_rede % len(ALGORITMOS)
+        algoritmos_ordenados = (
+            ALGORITMOS[deslocamento:]
+            + ALGORITMOS[:deslocamento]
+        )
+
+        for nome, algoritmo in algoritmos_ordenados:
             mediana = medir_tempo(
                 algoritmo,
+                nome,
                 grafo,
                 origem,
                 destino,
@@ -146,27 +185,27 @@ def main():
 
             memoria = medir_memoria(
                 algoritmo,
+                nome,
                 grafo,
                 origem,
                 destino,
             )
 
-            resultado = {
-                "algoritmo": nome,
-                "pontos": quantidade,
-                "conexoes": grafo.quantidade_conexoes(),
-                "repeticoes": REPETICOES,
-                "mediana_tempo_segundos": mediana,
-                "pico_memoria_kib": memoria,
-            }
-
-            resultados.append(resultado)
+            resultados.append(
+                {
+                    "algoritmo": nome,
+                    "pontos": quantidade,
+                    "conexoes": quantidade_conexoes,
+                    "repeticoes": REPETICOES,
+                    "mediana_tempo_segundos": mediana,
+                    "pico_memoria_kib": memoria,
+                }
+            )
 
             print(
                 f"{nome}: mediana = {mediana:.8f} s; "
                 f"pico de memória = {memoria:.2f} KiB"
             )
-
     salvar_csv(resultados)
     gerar_graficos(resultados)
 
