@@ -20,15 +20,14 @@ O parâmetro `-v` apresenta o resultado individual de cada teste, facilitando a 
 
 ## 3. Arquivos de teste e implementação
 
-- `tests/test_grafo.py` testa a estrutura e as validações do grafo.
-- `tests/test_busca_largura.py` testa a busca em largura.
-- `src/models/grafo.py` contém a implementação da estrutura de grafo.
-- `src/algorithms/busca_largura.py` contém a implementação da BFS.
-- `tests/test_busca_profundidade.py` testa a busca em profundidade.
-- `src/algorithms/busca_profundidade.py` contém a implementação da DFS.
-- `tests/test_dijkstra.py` testa as rotas e os custos calculados pelo Dijkstra.
-- `src/algorithms/dijkstra.py` contém a implementação do Dijkstra.
-
+- `tests/test_grafo.py` verifica a estrutura e as validações do grafo.
+- `tests/test_busca_largura.py` verifica a BFS.
+- `tests/test_busca_profundidade.py` verifica a DFS.
+- `tests/test_dijkstra.py` verifica rotas e custos do Dijkstra.
+- `tests/test_services.py` verifica a integração dos algoritmos pelo roteador.
+- `tests/test_app.py` verifica a interface de terminal.
+- `tests/test_dados.py` verifica o carregamento de CSV e a geração de redes sintéticas.
+- As implementações correspondentes ficam em `src/models/`, `src/algorithms/`, `src/services/`, `src/utils/`, `src/data/` e na raiz em `app.py`.
 
 ## 4. Cenários testados
 
@@ -98,6 +97,26 @@ O parâmetro `-v` apresenta o resultado individual de cada teste, facilitando a 
 | Peso zero e decimais | Calcular custo com pesos permitidos, comparando decimais com tolerância |
 | Validade do resultado | Conferir as conexões percorridas e a soma dos pesos |
 
+### Aplicativo de terminal e serviço de roteamento
+
+| Cenário | Arquivo | O que verifica |
+| --- | --- | --- |
+| Cadastro e busca com BFS | `tests/test_app.py` | Apresentação do caminho e do custo |
+| Busca com DFS | `tests/test_app.py` | Integração da opção DFS com a interface |
+| Busca de menor custo com Dijkstra | `tests/test_app.py` | Exibição da rota de menor custo e seu custo total |
+| Destino sem rota e ponto inexistente | `tests/test_app.py` | Mensagens de ausência de caminho e tratamento de `ValueError` |
+| Peso decimal com vírgula e peso negativo | `tests/test_app.py` | Conversão de entrada e mensagem de validação sem encerrar o menu |
+| Opção de menu/algoritmo inválida, inclusive dígito Unicode não conversível | `tests/test_app.py` | Mensagem apropriada e continuidade do programa |
+| Contratos dos algoritmos | `tests/test_services.py` | Disponibilidade de BFS/DFS/Dijkstra, custo, rota mínima, ausência de rota e origem igual ao destino |
+
+### Carregamento de dados e geração de redes
+
+| Cenário | Arquivo | O que verifica |
+| --- | --- | --- |
+| CSV válido, inválido ou inexistente | `tests/test_dados.py` | Cabeçalho, campos, pesos, conexões e erros de leitura |
+| Geração de redes pequenas | `tests/test_dados.py` | Quantidade de pontos e conexões e conectividade |
+| Geração repetida | `tests/test_dados.py` | Determinismo para a mesma entrada |
+
 ## 5. Técnicas utilizadas
 
 ### 5.1. Testes de condições
@@ -132,7 +151,7 @@ As execuções informadas ou realizadas em 14/10/2026 correspondem a snapshots d
 | Suíte da DFS mais recente, sem Dijkstra: `python -m pytest -v` | 39 aprovados, sem falhas | Informado pelo responsável pela DFS. |
 | Cópia integrada dos arquivos presentes nos dois ZIPs: `python -m pytest -v` | 50 aprovados em 0,18 s | Executado nesta revisão; o ZIP da DFS contém 12 casos, não os 13 informados depois. |
 
-Os resultados acima pertencem às versões indicadas. A execução de 50 testes confirma apenas os arquivos que estavam nos dois ZIPs integrados; a suíte final com a versão da DFS que contém os 13 testes informados ainda precisa ser executada. Os tempos variam conforme o ambiente e medem a suíte, não o desempenho isolado dos algoritmos.
+Os resultados acima pertencem às versões indicadas e são históricos. A cópia atual, que contém as versões integradas dos módulos, foi testada depois; o resultado mais recente está na seção 9. Não se somam totais de snapshots diferentes. Os tempos variam conforme o ambiente e medem a suíte, não o desempenho isolado dos algoritmos.
 
 ## 7. Limites da cobertura atual
 
@@ -140,7 +159,7 @@ Os testes cobrem cenários da estrutura do grafo e dos três algoritmos, incluin
 
 A aprovação dos testes não garante a ausência de todos os defeitos possíveis. A cobertura deve continuar evoluindo conforme novos requisitos e algoritmos forem implementados.
 
-Após receber a versão atualizada da DFS, deve-se executar novamente a suíte integrada e substituir ou complementar o registro acima com a saída observada.
+Após qualquer alteração posterior, execute novamente a suíte integrada e registre a saída observada, mantendo os resultados históricos identificados por snapshot.
 
 A análise de complexidade e o profiling devem ser documentados com base na implementação e em medições efetivamente realizadas.
 
@@ -149,3 +168,15 @@ A análise de complexidade e o profiling devem ser documentados com base na impl
 Os testes automatizados permitem verificar o comportamento esperado dos módulos e identificar regressões durante o desenvolvimento.
 
 A suíte completa deve ser executada novamente após alterações relevantes no grafo, nos algoritmos ou nos testes. Os resultados registrados devem corresponder a execuções reais e identificáveis.
+
+## 9. Atualização da suíte integrada — 02/11/2026
+
+A execução completa mais recente nesta cópia foi realizada com:
+
+```text
+python -m pytest -q -p no:cacheprovider
+```
+
+Resultado observado na execução integrada após a revisão do aplicativo: **102 testes aprovados em 0,31 segundo**, sem falhas. O tempo difere entre execuções porque depende do ambiente. A opção `-p no:cacheprovider` desativa o plugin de cache do pytest nesta execução; ela não altera os testes executados.
+
+A suíte inclui o teste de ciclo da BFS, o caso da DFS que demonstra que ela não garante o caminho com menos conexões, o ciclo de peso zero no Dijkstra e o teste da interface para entrada Unicode não conversível na seleção do algoritmo, além dos demais fluxos de integração e entradas inválidas. Esse resultado atualiza os registros históricos das seções anteriores; totais de snapshots diferentes não devem ser somados.

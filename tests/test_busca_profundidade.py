@@ -153,3 +153,23 @@ def test_identificadores_com_espacos_sao_padronizados():
 
     # O caminho deve usar os identificadores padronizados.
     assert caminho == ["A", "B", "C"]
+
+
+def test_dfs_nao_garante_o_caminho_com_menos_conexoes():
+    grafo = Grafo()
+
+    for ponto in ["S", "A", "B", "X", "T"]:
+        grafo.adicionar_ponto(ponto)
+
+    # A DFS explora primeiro o ramo longo; existe também S -> X -> T.
+    grafo.adicionar_conexao("S", "A", 1)
+    grafo.adicionar_conexao("S", "X", 1)
+    grafo.adicionar_conexao("A", "B", 1)
+    grafo.adicionar_conexao("B", "T", 1)
+    grafo.adicionar_conexao("X", "T", 1)
+
+    caminho = busca_profundidade(grafo, "S", "T")
+
+    assert caminho == ["S", "A", "B", "T"]
+    assert len(caminho) - 1 > 2  # A rota S -> X -> T tem duas conexões.
+    validar_caminho(grafo, caminho, "S", "T")

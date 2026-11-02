@@ -2,7 +2,7 @@
 
 ## 1. Objetivo
 
-Este documento descreve os algoritmos de busca e roteamento previstos para o MetroNet, relacionando seu funcionamento à estrutura de grafo implementada em Python.
+Este documento descreve os algoritmos de busca e roteamento implementados no MetroNet, relacionando seu funcionamento à estrutura de grafo implementada em Python.
 
 O projeto utiliza uma lista de adjacência para representar os pontos e suas conexões. A estrutura permite que os algoritmos consultem os vizinhos de cada ponto sem misturar a lógica de busca com o armazenamento da rede.
 
@@ -57,6 +57,9 @@ Com lista de adjacência, a BFS visita cada ponto alcançável e examina as cone
 
 `V` representa o número de pontos e `E`, o número de conexões. Em um grafo não direcionado, cada conexão aparece nas listas de adjacência dos dois extremos, mas isso não altera a ordem de crescimento da complexidade.
 
+### Testes relacionados
+
+`tests/test_busca_largura.py` cobre caminhos diretos e indiretos, origem igual ao destino, destino inacessível, pontos inexistentes, direção das conexões, minimização do número de conexões, múltiplas rotas mínimas, redes maiores e término em grafos com ciclos.
 
 ## 4. Busca em profundidade — DFS
 
@@ -97,12 +100,12 @@ Considerando a representação por lista de adjacência:
 
 ### Testes relacionados
 
-Os testes de `tests/test_busca_profundidade.py` verificam caminhos diretos e indiretos, origem igual ao destino, ausência de caminho, pontos inexistentes, grafos direcionados, ciclos, grafo vazio, ponto isolado, ramificações e validade das conexões do caminho retornado.
+Os testes de `tests/test_busca_profundidade.py` verificam caminhos diretos e indiretos, origem igual ao destino, ausência de caminho, pontos inexistentes, grafos direcionados, ciclos, grafo vazio, ponto isolado, ramificações, validade das conexões e um caso em que a DFS retorna caminho válido com mais conexões que outra rota disponível.
 
 
 ## 5. Algoritmo de Dijkstra
 
-**Estado: implementado e testado na cópia integrada de revisão.**
+**Estado: implementado e testado.**
 
 Dijkstra encontra um caminho de menor custo acumulado entre a origem e o destino. Ao contrário da BFS e da DFS, ele usa os pesos das conexões para escolher qual ponto explorar em seguida. O algoritmo só é correto com pesos não negativos; a classe `Grafo` rejeita pesos negativos e permite peso zero.
 
@@ -138,7 +141,7 @@ A justificativa detalhada está em `docs/06_complexidade.md`. Esses limites são
 
 ### Testes relacionados
 
-`tests/test_dijkstra.py` verifica caminho direto e indireto, escolha da rota mais barata, empate de custos, origem igual ao destino, destino inacessível, pontos inexistentes, direção das conexões, peso zero, custo decimal e soma dos pesos ao longo de rotas com várias conexões.
+`tests/test_dijkstra.py` verifica caminho direto e indireto, escolha da rota mais barata, empate de custos, origem igual ao destino, destino inacessível, pontos inexistentes, direção das conexões, peso zero, ciclo de peso zero, custo decimal e soma dos pesos ao longo de rotas com várias conexões.
 
 ## 6. Comparação dos algoritmos
 
@@ -155,7 +158,7 @@ BFS e Dijkstra resolvem problemas diferentes: a BFS minimiza a quantidade de con
 - **RF05:** executar BFS — atendido pela busca em largura.
 - **RF06:** executar DFS — atendido pela busca em profundidade implementada e testada.
 - **RF07:** executar Dijkstra — implementado em `src/algorithms/dijkstra.py`.
-- **RF08:** exibir o caminho encontrado — BFS, DFS e Dijkstra retornam a sequência de pontos; uma interface ou demonstração deve apresentar esse retorno.
+- **RF08:** exibir o caminho encontrado — BFS, DFS e Dijkstra retornam a sequência de pontos; `app.py` apresenta o caminho encontrado ao usuário.
 - **RF09:** informar o custo total — Dijkstra retorna o custo acumulado junto com o caminho.
 - **RF10:** informar quando não existir caminho — os três algoritmos retornam `None` quando os pontos existem, mas não há rota.
 

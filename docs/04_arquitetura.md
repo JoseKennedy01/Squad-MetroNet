@@ -19,33 +19,48 @@ A arquitetura segue estes princípios:
 
 ## 3. Organização lógica
 
-A arquitetura pode ser compreendida pelas seguintes responsabilidades:
+A arquitetura está separada em responsabilidades:
 
-1. **Modelo do grafo:** armazena os pontos, as conexões e os pesos.
-2. **Algoritmos:** percorrem o grafo e encontram caminhos de acordo com seus critérios.
-3. **Testes automatizados:** verificam o comportamento do modelo e dos algoritmos.
-4. **Documentação e análise:** registram a modelagem matemática, o funcionamento, a complexidade e os resultados experimentais.
+1. **Interface de terminal (`app.py`):** recebe comandos, chama o serviço de roteamento e apresenta os resultados.
+2. **Serviço (`src/services/roteador.py`):** seleciona BFS, DFS ou Dijkstra e padroniza o retorno como caminho e custo.
+3. **Modelo (`src/models/grafo.py`):** armazena pontos e conexões e valida os dados do grafo.
+4. **Algoritmos (`src/algorithms/`):** percorrem a rede segundo critérios próprios, sem depender da interface.
+5. **Entrada e dados (`src/utils/` e `src/data/`):** convertem pesos digitados e oferecem leitura de CSV e geração de redes sintéticas.
+6. **Testes e documentação:** verificam e descrevem os módulos e seus contratos.
 
-Uma camada de aplicação poderá coordenar operações e validações adicionais se isso se tornar necessário para atender aos requisitos. Ela não deve duplicar a lógica dos algoritmos.
+O aplicativo não duplica os algoritmos: encaminha as solicitações ao serviço, que usa as funções do núcleo.
 
 ## 4. Estrutura de diretórios
 
-A estrutura relevante do projeto é organizada da seguinte forma:
+A estrutura observada nesta cópia do projeto é:
 
 ```text
 Squad-MetroNet/
+├── app.py
 ├── src/
+│   ├── algorithms/
+│   │   ├── busca_largura.py
+│   │   ├── busca_profundidade.py
+│   │   └── dijkstra.py
+│   ├── data/
+│   │   ├── carregar_rede.py
+│   │   └── gerar_rede_sintetica.py
 │   ├── models/
 │   │   └── grafo.py
-│   └── algorithms/
-│       ├── busca_largura.py
-│       ├── busca_profundidade.py
-│       └── dijkstra.py
+│   ├── services/
+│   │   └── roteador.py
+│   └── utils/
+│       └── entrada_cli.py
 ├── tests/
-│   ├── test_grafo.py
+│   ├── test_app.py
 │   ├── test_busca_largura.py
 │   ├── test_busca_profundidade.py
-│   └── test_dijkstra.py
+│   ├── test_dados.py
+│   ├── test_dijkstra.py
+│   ├── test_grafo.py
+│   └── test_services.py
+├── reports/
+│   └── profiling/
 └── docs/
     ├── 01_visao_produto.md
     ├── 02_requisitos.md
@@ -54,10 +69,11 @@ Squad-MetroNet/
     ├── 05_algoritmos.md
     ├── 06_complexidade.md
     ├── 07_testes.md
+    ├── 07_execucao.md
     └── 08_resultados.md
 ```
 
-A lista representa a organização prevista dos módulos. Arquivos como `dijkstra.py` e `test_dijkstra.py` devem ser confirmados no repositório antes de serem considerados existentes ou concluídos.
+Os documentos mantêm os nomes já adotados no repositório. O guia de execução foi acrescentado como `docs/07_execucao.md`; ele convive com `docs/07_testes.md` sem renomear nem mover arquivos existentes.
 
 ## 5. Modelo do grafo
 
@@ -100,31 +116,25 @@ A DFS explora um caminho em profundidade antes de retornar para explorar alterna
 
 ### Dijkstra
 
-Arquivo previsto: `src/algorithms/dijkstra.py`.
+Arquivo: `src/algorithms/dijkstra.py`.
 
-Dijkstra deverá utilizar os pesos das conexões para encontrar um caminho de menor custo. Sua descrição final deverá refletir a implementação efetivamente adotada e o formato de retorno definido no projeto.
+Dijkstra utiliza os pesos não negativos das conexões e uma fila de prioridade `heapq` para encontrar um caminho de menor custo. A função `dijkstra(grafo, origem, destino)` retorna `(caminho, custo_total)` ou `None` quando não há rota; pontos inexistentes geram `ValueError`.
 
-## 7. Fluxo de execução lógico
+## 7. Fluxo de execução
 
-O fluxo esperado para uma operação de busca é:
+1. `app.py` recebe a opção do menu e os dados digitados.
+2. Para cadastrar, encaminha pontos e conexões ao modelo `Grafo`; para buscar, encaminha origem, destino e algoritmo ao serviço `executar_rota`.
+3. O serviço chama BFS, DFS ou Dijkstra. Os algoritmos validam os pontos e consultam vizinhos pelo modelo.
+4. O serviço retorna o caminho e o custo, ou `None` quando não existe rota.
+5. A interface apresenta o resultado ou uma mensagem compreensível de erro.
 
-1. Receber o grafo, a origem e o destino.
-2. Validar se os pontos existem.
-3. Consultar as conexões por meio dos métodos públicos de `Grafo`.
-4. Executar o algoritmo correspondente.
-5. Reconstruir o caminho quando houver rota.
-6. Retornar o resultado ou indicar que não existe caminho.
-7. Permitir que a camada responsável pela apresentação exiba o resultado, caso exista uma interface de execução.
-
-A lógica de busca não deve ser duplicada na interface.
+A rede criada pelo menu é mantida em memória durante a execução do programa. A lógica de busca permanece fora da interface.
 
 ## 8. Testes automatizados
 
-O diretório `tests/` contém os testes do projeto.
+O diretório `tests/` contém testes para o modelo, algoritmos, serviço de roteamento, interface e módulos de dados. Os casos cobrem caminhos válidos, pontos inexistentes, destinos inacessíveis, ciclos, conexões direcionadas, pesos inválidos e integração da interface.
 
-Os testes verificam tanto o comportamento da classe `Grafo` quanto os resultados dos algoritmos. Eles devem cobrir caminhos válidos, pontos inexistentes, destinos inacessíveis, ciclos, conexões direcionadas e outras situações relevantes.
-
-O comando utilizado para executar a suíte é:
+Para executar a suíte completa:
 
 ```bash
 python -m pytest -v
@@ -138,10 +148,8 @@ Os testes dependem das classes e funções que verificam. A documentação regis
 
 Essa organização reduz o acoplamento: alterações internas na representação do grafo podem ser realizadas com menor impacto, desde que sua interface pública e seu comportamento sejam preservados.
 
-## 10. Estado e evolução da arquitetura
+## 10. Estado atual da arquitetura
 
-A classe `Grafo`, a BFS e a DFS fazem parte da implementação já relatada como existente no projeto.
+O modelo do grafo, BFS, DFS, Dijkstra, serviço de roteamento, conversão de entradas, interface de terminal, carregador de CSV e gerador de redes sintéticas estão implementados. A suíte integrada verifica esses módulos.
 
-A implementação do Dijkstra, uma eventual camada de aplicação e outras partes da arquitetura devem ser registradas como concluídas somente após a verificação dos arquivos, dos testes e dos requisitos correspondentes.
-
-A arquitetura deverá ser revisada quando os algoritmos restantes forem integrados e quando a implementação final permitir confirmar o fluxo completo de execução.
+O menu não oferece opção para carregar CSV ou gerar redes; essas funções ficam disponíveis em `src/data/` para uso separado. Os scripts de benchmark e profiling estão em `reports/profiling/` e pertencem à frente de análise experimental.

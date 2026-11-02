@@ -145,3 +145,17 @@ def test_calcula_rota_em_rede_com_varias_conexoes():
     assert caminho == ["A", "C", "B", "D", "F"]
     assert custo == 10
     validar_caminho_e_custo(grafo, caminho, custo)
+
+
+def test_termina_corretamente_com_ciclo_de_peso_zero():
+    grafo = criar_grafo("A", "B", "C", "D")
+    grafo.adicionar_conexao("A", "B", 0)
+    grafo.adicionar_conexao("B", "C", 0)
+    grafo.adicionar_conexao("C", "A", 0)
+    grafo.adicionar_conexao("C", "D", 2)
+
+    caminho, custo = dijkstra(grafo, "A", "D")
+
+    assert caminho == ["A", "C", "D"]
+    assert custo == 2
+    validar_caminho_e_custo(grafo, caminho, custo)

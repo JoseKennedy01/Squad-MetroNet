@@ -99,3 +99,16 @@ def test_encontra_caminho_em_rede_maior():
         grafo.adicionar_conexao(pontos[indice], pontos[indice + 1], 1)
 
     assert busca_largura(grafo, pontos[0], pontos[-1]) == pontos
+
+def test_termina_corretamente_em_grafo_com_ciclo():
+    grafo = criar_grafo("A", "B", "C", "D")
+    grafo.adicionar_conexao("A", "B", 1)
+    grafo.adicionar_conexao("B", "C", 1)
+    grafo.adicionar_conexao("C", "A", 1)
+    grafo.adicionar_conexao("C", "D", 1)
+
+    caminho = busca_largura(grafo, "A", "D")
+
+    assert caminho == ["A", "C", "D"]
+    assert len(caminho) == len(set(caminho))
+

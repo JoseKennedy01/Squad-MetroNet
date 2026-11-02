@@ -57,11 +57,16 @@ def buscar_rota(grafo):
         print(f"{numero}. {nome}")
 
     opcao = input("Escolha o algoritmo: ").strip()
-    if not opcao.isdigit() or not 1 <= int(opcao) <= len(algoritmos):
+    try:
+        numero_opcao = int(opcao)
+    except ValueError:
+        numero_opcao = 0
+
+    if not 1 <= numero_opcao <= len(algoritmos):
         print("Opção de algoritmo inválida.")
         return
 
-    algoritmo = algoritmos[int(opcao) - 1]
+    algoritmo = algoritmos[numero_opcao - 1]
     origem = input("Ponto de origem: ")
     destino = input("Ponto de destino: ")
 

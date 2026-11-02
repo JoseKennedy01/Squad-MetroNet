@@ -333,3 +333,32 @@ Também foram informadas 15 medições de tempo por algoritmo e tamanho de rede,
 Nessas redes e condições relatadas, a DFS apresentou a menor mediana e Dijkstra a maior. Essa observação se limita aos casos medidos e não garante a mesma ordem para outras redes. A equipe também informou a medição separada do pico de memória com `tracemalloc`, que acompanha alocações rastreadas pelo Python e não equivale ao uso total de memória do processo.
 
 **Estado dos artefatos nesta cópia:** não foram encontrados os módulos e resultados citados pela equipe — `src/data/gerar_rede_sintetica.py`, `reports/profiling/benchmark_algoritmos.py`, `reports/profiling/perfil_algoritmos.py`, `reports/profiling/resultados_benchmark.csv`, os gráficos ou os arquivos `.prof`. Portanto, os comandos para reproduzir os experimentos e os valores de memória ainda não estão confirmados aqui. A equipe informou que o profiling usa `cProfile`/`pstats` e gera perfis para três algoritmos em três tamanhos; os tempos do perfilador incluem sobrecarga e não são diretamente comparáveis às medianas do benchmark.
+
+
+---
+
+## Atualização de desenvolvimento — 02/11/2026
+
+Esta seção complementa os registros anteriores sem substituir o texto já existente.
+
+- Revisamos o modelo do grafo, BFS, DFS, Dijkstra e a interface de terminal; as implementações foram preservadas.
+- Acrescentamos cobertura para ciclo na BFS, caminho não mínimo na DFS, ciclo de peso zero em Dijkstra e integração da interface com DFS/Dijkstra, pesos inválidos, algoritmo inválido e ponto inexistente.
+- A execução integrada mais recente registrou **101 testes aprovados em 0,26 segundo**: 16 de grafo, 26 dos módulos de dados, 11 de BFS, 14 de DFS, 13 de Dijkstra, 12 de serviços e 9 da interface. Esse tempo mede a suíte, não o desempenho comparativo dos algoritmos.
+- Confirmamos o início do menu por `python app.py` e o encerramento ao selecionar `0`. A suíte completa é executada com `python -m pytest -v`.
+- Nesta cópia estão presentes `src/data/carregar_rede.py`, `src/data/gerar_rede_sintetica.py` e scripts e artefatos em `reports/profiling/`. Isso atualiza a observação anterior, que refletia um snapshot sem esses arquivos. Os benchmarks e o profiling não foram executados nesta etapa para preservar os artefatos da pessoa responsável por essa frente.
+- A documentação de arquitetura, algoritmos e testes foi alinhada aos módulos atuais. O guia de execução está em `docs/07_execucao.md`.
+
+### Reexecução da suíte — 02/11/2026
+
+A suíte foi executada novamente após a revisão documental: **101 testes aprovados em 0,55 segundo**, sem falhas, com `python -m pytest -q -p no:cacheprovider`. Este tempo substitui apenas o tempo registrado na atualização de desenvolvimento acima; o total de testes permaneceu 101.
+
+---
+
+## Atualização após revisão do fluxo de entrada — 02/11/2026
+
+Esta nota acrescenta o resultado posterior sem reescrever os registros anteriores.
+
+- A seleção de algoritmo agora trata entradas Unicode que não podem ser convertidas para inteiro como opção inválida, em vez de encerrar com exceção. O novo cenário está em `tests/test_app.py`.
+- Após essa correção, a suíte completa apresentou **102 testes aprovados em 0,31 segundo**, sem falhas, com `python -m pytest -q -p no:cacheprovider`.
+- A suíte atual inclui 16 testes do grafo, 26 dos módulos de dados, 11 de BFS, 14 de DFS, 13 de Dijkstra, 12 do serviço de roteamento e 10 da interface. A soma corresponde aos 102 testes dessa execução; resultados de outras versões não devem ser somados a ela.
+- **Ponto documental a coordenar:** `docs/02_requisitos.md` ainda diz que a apresentação de RF08 pela interface precisa ser confirmada. O `app.py` atual exibe o caminho. O documento de requisitos não foi alterado nesta etapa; alinhar essa frase com a pessoa responsável antes de declarar a documentação inteiramente consistente.
