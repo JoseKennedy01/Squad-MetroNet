@@ -2,8 +2,9 @@
 
 from heapq import heappop, heappush
 
+
 def dijkstra(grafo, origem, destino):
-    """ Retorna (caminho, custo) ou None se não houver rota.
+    """Retorna (caminho, custo) ou None se não houver rota.
 
     Levanta ValueError se a origem ou o destino não estiver cadastrado.
     O grafo valida os pesos e não permite valores negativos.

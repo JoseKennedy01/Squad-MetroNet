@@ -28,6 +28,10 @@ python app.py
 
 O menu permite cadastrar pontos, cadastrar conexões ponderadas, consultar a rede e buscar uma rota. Para encerrar, escolha `0`.
 
+Na etapa de busca, o menu também descreve o objetivo de cada opção: BFS procura um caminho com menos conexões, DFS explora a rede em profundidade e Dijkstra procura uma rota de menor custo acumulado.
+
+Após a busca, o programa exibe o caminho encontrado e o campo "Custo da rota encontrada". Para BFS e DFS, o custo corresponde ao caminho retornado; somente Dijkstra busca minimizar esse custo.
+
 A rede começa vazia. Os cadastros feitos pelo menu permanecem em memória somente durante aquela execução. O menu usa uma rede não direcionada. Pesos decimais podem ser digitados com vírgula, como `2,5`.
 
 ## 4. Executar os testes
@@ -46,6 +50,7 @@ python -m pytest -v tests/test_busca_largura.py
 python -m pytest -v tests/test_busca_profundidade.py
 python -m pytest -v tests/test_dijkstra.py
 python -m pytest -v tests/test_app.py
+python -m pytest -v tests/test_services.py
 ```
 
 O modo `-v` mostra cada caso individualmente. Registre o comando, a versão do código e a saída observada para cada resultado compartilhado.

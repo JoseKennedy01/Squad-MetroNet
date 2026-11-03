@@ -70,7 +70,8 @@ Squad-MetroNet/
     ├── 06_complexidade.md
     ├── 07_testes.md
     ├── 07_execucao.md
-    └── 08_resultados.md
+    ├── 08_resultados.md
+    └── 09_dados.md
 ```
 
 Os documentos mantêm os nomes já adotados no repositório. O guia de execução foi acrescentado como `docs/07_execucao.md`; ele convive com `docs/07_testes.md` sem renomear nem mover arquivos existentes.
@@ -88,7 +89,7 @@ Suas principais responsabilidades são:
 - Validar identificadores, conexões e pesos.
 - Consultar pontos, vizinhos e quantidades.
 
-A implementação utiliza um conjunto para armazenar os pontos e um dicionário de listas de adjacência para armazenar as conexões.
+A implementação utiliza um conjunto para armazenar os pontos e um dicionário de listas de adjacência para armazenar as conexões. O parâmetro `direcionado` aceita somente valores booleanos (`True` ou `False`); outros tipos são rejeitados.
 
 Cada entrada da lista de adjacência contém uma tupla no formato:
 

@@ -118,6 +118,20 @@ def test_aceita_peso_zero_e_calcula_custo_total():
     validar_caminho_e_custo(grafo, caminho, custo)
 
 
+def test_termina_corretamente_em_ciclo_com_peso_zero():
+    grafo = criar_grafo("A", "B", "C", direcionado=True)
+    grafo.adicionar_conexao("A", "B", 0)
+    grafo.adicionar_conexao("B", "A", 0)
+    grafo.adicionar_conexao("B", "C", 2)
+    grafo.adicionar_conexao("A", "C", 5)
+
+    caminho, custo = dijkstra(grafo, "A", "C")
+
+    assert caminho == ["A", "B", "C"]
+    assert custo == 2
+    validar_caminho_e_custo(grafo, caminho, custo)
+
+
 def test_compara_custo_decimal_com_tolerancia_numerica():
     grafo = criar_grafo("A", "B", "C")
     grafo.adicionar_conexao("A", "B", 0.1)
@@ -147,15 +161,44 @@ def test_calcula_rota_em_rede_com_varias_conexoes():
     validar_caminho_e_custo(grafo, caminho, custo)
 
 
-def test_termina_corretamente_com_ciclo_de_peso_zero():
-    grafo = criar_grafo("A", "B", "C", "D")
-    grafo.adicionar_conexao("A", "B", 0)
-    grafo.adicionar_conexao("B", "C", 0)
-    grafo.adicionar_conexao("C", "A", 0)
-    grafo.adicionar_conexao("C", "D", 2)
+def test_atualiza_rota_quando_encontra_custo_melhor_para_ponto():
+    grafo = criar_grafo("A", "B", "C", "D", direcionado=True)
+    grafo.adicionar_conexao("A", "B", 2)
+    grafo.adicionar_conexao("A", "C", 1)
+    grafo.adicionar_conexao("C", "B", 0.5)
+    grafo.adicionar_conexao("B", "D", 2)
+    grafo.adicionar_conexao("C", "D", 10)
 
     caminho, custo = dijkstra(grafo, "A", "D")
 
-    assert caminho == ["A", "C", "D"]
-    assert custo == 2
+    assert caminho == ["A", "C", "B", "D"]
+    assert custo == 3.5
+    validar_caminho_e_custo(grafo, caminho, custo)
+
+
+def test_reconstroi_caminho_em_rede_com_cem_pontos():
+    pontos = [f"P{indice:03}" for indice in range(100)]
+    grafo = criar_grafo(*pontos)
+
+    for origem, destino in zip(pontos, pontos[1:]):
+        grafo.adicionar_conexao(origem, destino, 1)
+
+    # A conexão alternativa reduz o custo da primeira metade da rota.
+    grafo.adicionar_conexao("P000", "P050", 10)
+
+    caminho, custo = dijkstra(grafo, "P000", "P099")
+    caminho_esperado = ["P000", *pontos[50:]]
+
+    assert caminho == caminho_esperado
+    assert custo == 59
+    validar_caminho_e_custo(grafo, caminho, custo)
+
+def test_normaliza_espacos_externos_na_origem_e_no_destino():
+    grafo = criar_grafo("A", "B")
+    grafo.adicionar_conexao("A", "B", 2.5)
+
+    caminho, custo = dijkstra(grafo, " A ", " B ")
+
+    assert caminho == ["A", "B"]
+    assert custo == 2.5
     validar_caminho_e_custo(grafo, caminho, custo)

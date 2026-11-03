@@ -52,9 +52,14 @@ def cadastrar_conexao(grafo):
 def buscar_rota(grafo):
     # Solicita origem, destino e algoritmo e apresenta o resultado.
     algoritmos = obter_algoritmos_disponiveis()
+    descricoes = {
+        "BFS": "caminho com menos conexões",
+        "DFS": "exploração em profundidade",
+        "DIJKSTRA": "caminho de menor custo acumulado",
+    }
     print("Algoritmos disponíveis:")
     for numero, nome in enumerate(algoritmos, start=1):
-        print(f"{numero}. {nome}")
+        print(f"{numero}. {nome} — {descricoes[nome]}")
 
     opcao = input("Escolha o algoritmo: ").strip()
     try:
@@ -82,7 +87,7 @@ def buscar_rota(grafo):
 
     caminho, custo = resultado
     print(f"Caminho encontrado: {' -> '.join(caminho)}")
-    print(f"Custo total do caminho: {custo:g}")
+    print(f"Custo da rota encontrada: {custo:g}")
 
 
 def executar_menu():

@@ -141,7 +141,7 @@ A justificativa detalhada está em `docs/06_complexidade.md`. Esses limites são
 
 ### Testes relacionados
 
-`tests/test_dijkstra.py` verifica caminho direto e indireto, escolha da rota mais barata, empate de custos, origem igual ao destino, destino inacessível, pontos inexistentes, direção das conexões, peso zero, ciclo de peso zero, custo decimal e soma dos pesos ao longo de rotas com várias conexões.
+`tests/test_dijkstra.py` verifica caminho direto e indireto, escolha da rota mais barata, empate de custos, origem igual ao destino, destino inacessível, pontos inexistentes, direção das conexões, peso zero, ciclo de peso zero, custo decimal, soma dos pesos ao longo de rotas com várias conexões, atualização da rota quando um custo menor é descoberto posteriormente, reconstrução em uma rede determinística de 100 pontos e normalização de espaços externos nos identificadores.
 
 ## 6. Comparação dos algoritmos
 
@@ -151,7 +151,7 @@ A justificativa detalhada está em `docs/06_complexidade.md`. Esses limites são
 | DFS | Explora caminhos em profundidade | Não | Não |
 | Dijkstra | Encontra o caminho de menor custo | Sim | Não necessariamente |
 
-BFS e Dijkstra resolvem problemas diferentes: a BFS minimiza a quantidade de conexões, enquanto Dijkstra minimiza a soma dos custos.
+BFS e Dijkstra resolvem problemas diferentes: a BFS minimiza a quantidade de conexões, enquanto Dijkstra minimiza a soma dos custos. A interface exibe o custo da rota encontrada; para BFS e DFS, esse valor é a soma dos pesos do caminho escolhido, sem garantia de ser o menor custo.
 
 ## 7. Relação com os requisitos
 

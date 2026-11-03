@@ -180,3 +180,45 @@ python -m pytest -q -p no:cacheprovider
 Resultado observado na execução integrada após a revisão do aplicativo: **102 testes aprovados em 0,31 segundo**, sem falhas. O tempo difere entre execuções porque depende do ambiente. A opção `-p no:cacheprovider` desativa o plugin de cache do pytest nesta execução; ela não altera os testes executados.
 
 A suíte inclui o teste de ciclo da BFS, o caso da DFS que demonstra que ela não garante o caminho com menos conexões, o ciclo de peso zero no Dijkstra e o teste da interface para entrada Unicode não conversível na seleção do algoritmo, além dos demais fluxos de integração e entradas inválidas. Esse resultado atualiza os registros históricos das seções anteriores; totais de snapshots diferentes não devem ser somados.
+
+## 10. Execução integrada atualizada — 03/11/2026
+
+A suíte integrada foi executada na pasta original do MetroNet com:
+
+```text
+python -B -m pytest -q -p no:cacheprovider
+```
+
+Resultado observado: **116 testes aprovados em 1,05 segundo**, sem falhas. A execução inclui os testes atuais do grafo, BFS, DFS, Dijkstra, serviço de roteamento, interface de terminal e módulos de dados.
+
+A primeira tentativa no ambiente restrito aprovou 96 testes, mas 20 testes de dados não conseguiram criar diretórios temporários (`tmp_path`). A suíte foi repetida com permissão para criar esses arquivos temporários e todos os testes passaram. Essa diferença foi causada pelo ambiente da primeira execução; o resultado de 116 aprovados corresponde à execução completa bem-sucedida.
+
+A opção `-B` evita a gravação de arquivos de bytecode e `-p no:cacheprovider` desativa o cache do pytest. Essas opções não alteram os cenários executados.
+
+A suíte também inclui os testes recentes da interface para identificador vazio e peso não numérico, além da integração da DFS e da seleção do caminho de menor custo pelo Dijkstra.
+## 11. Testes isolados após as metas 17 a 22 — 03/11/2026
+
+Após a execução integrada registrada na seção 10, foram acrescentados sete testes aos módulos do grafo, Dijkstra e aplicação. Os resultados abaixo correspondem a execuções isoladas realizadas separadamente:
+
+| Arquivo | Comando | Resultado observado |
+| --- | --- | --- |
+| `tests/test_app.py` | `python -B -m pytest -v -p no:cacheprovider tests/test_app.py` | 16 aprovados em 0,08 s |
+| `tests/test_grafo.py` | `python -B -m pytest -v -p no:cacheprovider tests/test_grafo.py` | 21 aprovados em 0,08 s |
+| `tests/test_dijkstra.py` | `python -B -m pytest -v -p no:cacheprovider tests/test_dijkstra.py` | 16 aprovados em 0,07 s |
+
+Os novos cenários verificam as descrições do menu, entradas vazias, erros de Dijkstra pela interface, integridade do grafo após conexões com extremos inexistentes, uma rede determinística com 100 pontos e identificadores com espaços externos no Dijkstra.
+
+Esses resultados são de execuções isoladas; seus tempos não devem ser somados nem comparados como desempenho dos algoritmos. A suíte completa ainda precisa ser executada novamente após esses acréscimos. O resultado integrado de 116 testes da seção 10 é anterior a eles e não representa o total atual.
+## 12. Testes da interface após as metas 25 a 28 — 03/11/2026
+
+A execução mais recente dos testes da interface foi realizada com:
+
+```text
+python -B -m pytest -v -p no:cacheprovider tests/test_app.py
+```
+
+Resultado observado: **19 testes aprovados em 0,10 segundo**, sem falhas. Os novos cenários verificam a consulta de uma rede vazia e de uma rede com conexão, a rejeição de cadastros repetidos e a rejeição de pesos `NaN`, infinito e infinito negativo. Os testes também confirmam que a interface continua funcionando após apresentar essas mensagens.
+
+O texto do custo exibido foi ajustado para “Custo da rota encontrada”. Nos testes da interface, a mensagem é conferida para os caminhos calculados por BFS, DFS e Dijkstra.
+
+A suíte completa ainda precisa ser executada novamente na Meta 30. O último resultado integrado de 116 testes, registrado na seção 10, antecede as alterações das metas 25 a 28 e não representa o total atual.
