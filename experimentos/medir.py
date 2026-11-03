@@ -71,4 +71,3 @@ if __name__ == "__main__":
     print("\n--- cProfile (Dijkstra, n=500) ---")
     grafo500, nomes500 = gerar_grafo(500, EXTRAS, SEMENTE)
     print(executar_profiling(dijkstra, grafo500, nomes500[0], nomes500[-1]))
-

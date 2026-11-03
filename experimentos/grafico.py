@@ -36,4 +36,3 @@ def gerar_graficos():
 
 if __name__ == "__main__":
     gerar_graficos()
-
