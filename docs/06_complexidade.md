@@ -80,7 +80,7 @@ As complexidades são limites teóricos para a representação e implementação
 
 ### 8.1. Metodologia
 
-A análise experimental foi realizada com redes sintéticas geradas de forma determinística, permitindo repetir os experimentos com os mesmos dados.
+A análise experimental foi realizada com redes sintéticas geradas de forma determinística pelo módulo `src/data/gerar_rede_sintetica.py`, permitindo repetir os experimentos com os mesmos dados.
 
 Foram utilizadas três redes:
 
@@ -90,23 +90,33 @@ Foram utilizadas três redes:
 | 500 | 997 |
 | 1.000 | 1.997 |
 
-Os algoritmos BFS, DFS e Dijkstra foram executados com a mesma rede, origem e destino para cada tamanho testado.
+Os algoritmos BFS, DFS e Dijkstra foram executados nas mesmas redes, utilizando `EST001` como origem e o último ponto da rede como destino.
 
-Para medir o tempo, cada algoritmo foi executado 15 vezes por tamanho de rede. O resultado registrado corresponde à mediana dos tempos obtidos. Uma execução inicial de aquecimento foi realizada antes das medições.
+Para medir o tempo, cada algoritmo foi executado 15 vezes por tamanho de rede. Antes das medições, foi realizada uma execução inicial de aquecimento. A mediana dos tempos foi utilizada como resultado representativo.
 
-O pico de memória rastreada foi medido separadamente com `tracemalloc`, evitando incluir o custo do rastreamento nas medições de tempo.
+O pico de memória rastreada foi medido separadamente com `tracemalloc`, utilizando cinco repetições por algoritmo e tamanho de rede. Essa medição representa o pico de alocações rastreadas pelo Python durante a execução, e não o consumo total de memória do processo.
+
+A ordem dos algoritmos foi alternada entre as rodadas de medição para reduzir possíveis efeitos decorrentes da execução sempre na mesma sequência.
 
 O script `reports/profiling/benchmark_algoritmos.py` gera os resultados em CSV e os gráficos comparativos. O script `reports/profiling/perfil_algoritmos.py` complementa a análise com informações de perfil de execução obtidas por `cProfile`.
 
 ### 8.2. Resultados de tempo
 
+A tabela apresenta as medianas dos tempos de execução observadas no benchmark:
+
 | Pontos | BFS (s) | DFS (s) | Dijkstra (s) |
 |---:|---:|---:|---:|
-| 100 | 0,00004730 | 0,00004040 | 0,00007690 |
-| 500 | 0,00025370 | 0,00034030 | 0,00042200 |
-| 1.000 | 0,00050800 | 0,00042190 | 0,00079610 |
+| 100 | 0,00004880 | 0,00004200 | 0,00008030 |
+| 500 | 0,00025450 | 0,00021640 | 0,00041040 |
+| 1.000 | 0,00052210 | 0,00042820 | 0,00082330 |
 
-Nas redes testadas, a DFS apresentou a menor mediana de tempo nas configurações de 100 e 1.000 pontos, enquanto a BFS apresentou a menor mediana na rede de 500 pontos. Dijkstra apresentou a maior mediana nas três configurações. Os tempos observados aumentaram conforme o tamanho da rede cresceu, embora as diferenças entre os algoritmos variassem de acordo com a configuração.
+Nas três redes testadas, a DFS apresentou a menor mediana de tempo, enquanto Dijkstra apresentou a maior mediana.
+
+Os tempos dos três algoritmos aumentaram conforme o tamanho da rede cresceu. Ao comparar redes de 100 e 500 pontos, o tempo aumentou aproximadamente cinco vezes. Na comparação entre 500 e 1.000 pontos, o aumento ficou próximo de duas vezes.
+
+Esse comportamento é compatível com o crescimento observado nas redes utilizadas. Entretanto, os resultados não comprovam, isoladamente, as complexidades teóricas dos algoritmos.
+
+A DFS ter apresentado os menores tempos nesses experimentos não significa que seja sempre mais rápida. O desempenho depende da estrutura do grafo, da ordem de exploração e da localização do destino.
 
 ### 8.3. Resultados de memória
 
@@ -116,9 +126,11 @@ Nas redes testadas, a DFS apresentou a menor mediana de tempo nas configuraçõe
 | 500 | 54,15 | 52,45 | 37,60 |
 | 1.000 | 76,34 | 72,26 | 77,27 |
 
-A medição representa o pico de memória rastreada pelo `tracemalloc` durante uma execução do algoritmo. Não representa o consumo total de memória do processo Python.
+A medição representa a mediana dos picos de memória rastreada pelo `tracemalloc` durante cinco repetições de cada algoritmo. Não representa o consumo total de memória do processo Python.
 
-Na rede de 1.000 pontos, Dijkstra apresentou o maior pico de memória entre os três algoritmos. Entretanto, os resultados não permitem concluir que esse comportamento ocorrerá em todas as redes.
+Na rede de 1.000 pontos, Dijkstra apresentou o maior pico de memória entre os três algoritmos. Nas redes de 100 e 500 pontos, apresentou os menores valores.
+
+Os resultados demonstram que o consumo observado variou conforme o algoritmo e o tamanho da rede. Entretanto, não permitem concluir que esse comportamento ocorrerá em todas as redes.
 
 ### 8.4. Perfil de execução
 
@@ -127,6 +139,14 @@ O `cProfile` foi utilizado para registrar chamadas de funções e auxiliar na id
 Nos relatórios, aparecem chamadas relacionadas à busca de vizinhos e à validação de identificadores do grafo. Em Dijkstra, também aparecem operações de inserção e remoção da fila de prioridade, implementada com `heapq`.
 
 O perfilador adiciona custo à execução. Por isso, os tempos obtidos com `cProfile` não devem ser comparados diretamente com as medianas do benchmark.
+
+Os arquivos de perfil foram gerados para os três algoritmos, considerando redes de 100, 500 e 1.000 pontos, totalizando nove arquivos `.prof`.
+
+A análise identificou chamadas frequentes às operações `obter_vizinhos()` e `_validar_identificador()`, pertencentes à estrutura do grafo. Na BFS e na DFS, também foram registradas operações relacionadas às estruturas de fila, pilha e conjunto de visitados.
+
+Em Dijkstra, foram identificadas operações `_heapq.heappush` e `_heapq.heappop`, utilizadas no gerenciamento da fila de prioridade.
+
+O profiling permite observar as funções executadas e suas chamadas, mas os tempos registrados incluem o custo adicional da instrumentação e não devem ser utilizados como substitutos das medições do benchmark.
 
 ### 8.5. Limitações
 

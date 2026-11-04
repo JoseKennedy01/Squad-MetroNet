@@ -1,6 +1,7 @@
 import cProfile
 import pstats
 import time
+import math
 from pathlib import Path
 from src.algorithms.busca_largura import busca_largura
 from src.algorithms.busca_profundidade import busca_profundidade
@@ -19,26 +20,80 @@ ALGORITMOS = [
     ("Dijkstra", dijkstra),
 ]
 
-def validar_resultado(resultado, nome, origem, destino):
-    # Dijkstra retorna (caminho, custo); BFS e DFS retornam o caminho.
-    if (
-        isinstance(resultado, tuple)
-        and len(resultado) == 2
-        and isinstance(resultado[0], (list, tuple))
-    ):
-        caminho = resultado[0]
+def validar_resultado(resultado, nome, grafo, origem, destino):
+    # O Dijkstra retorna uma tupla contendo caminho e custo.
+    if nome == "Dijkstra":
+        if not isinstance(resultado, tuple) or len(resultado) != 2:
+            raise RuntimeError("O Dijkstra deve retornar (caminho, custo).")
+
+        caminho, custo_total = resultado
+
+        # Verifica se o custo é numérico, finito e não negativo.
+        if (
+            isinstance(custo_total, bool)
+            or not isinstance(custo_total, (int, float))
+            or not math.isfinite(custo_total)
+            or custo_total < 0
+        ):
+            raise RuntimeError("O Dijkstra retornou um custo inválido.")
+
     else:
+        # BFS e DFS retornam diretamente o caminho.
         caminho = resultado
+        custo_total = None
 
-    # Rejeita resultados vazios ou que não representem um caminho.
+    # Verifica se o caminho possui uma estrutura válida.
     if not isinstance(caminho, (list, tuple)) or not caminho:
-        raise RuntimeError(
-            f"{nome} não retornou um caminho válido."
-        )
+        raise RuntimeError(f"{nome} não retornou um caminho válido.")
 
-    # Confirma que o caminho começa e termina nos pontos solicitados.
+    # Confere se o caminho começa na origem e termina no destino.
     if caminho[0] != origem or caminho[-1] != destino:
-        raise RuntimeError(f"{nome} retornou uma origem ou um destino incorreto.")
+        raise RuntimeError(f"{nome} retornou origem ou destino incorretos.")
+
+    # Verifica se todos os pontos do caminho existem no grafo.
+    for ponto in caminho:
+        if not grafo.possui_ponto(ponto):
+            raise RuntimeError(f"O caminho contém um ponto inexistente: {ponto}")
+
+    # Percorre os pontos consecutivos e verifica as conexões.
+    custo_calculado = 0
+
+    for indice in range(len(caminho) - 1):
+        ponto_atual = caminho[indice]
+        proximo_ponto = caminho[indice + 1]
+
+        # Procura uma conexão entre o ponto atual e o próximo.
+        vizinhos = grafo.obter_vizinhos(ponto_atual)
+
+        peso_conexao = None
+
+        for vizinho, peso in vizinhos:
+            if vizinho == proximo_ponto:
+                peso_conexao = peso
+                break
+
+        # Uma conexão inexistente invalida o caminho.
+        if peso_conexao is None:
+            raise RuntimeError(
+                f"Não existe conexão entre {ponto_atual} e {proximo_ponto}."
+            )
+
+        # Soma os pesos para conferir o custo do Dijkstra.
+        custo_calculado += peso_conexao
+
+    # Confere se o custo retornado pelo Dijkstra corresponde ao caminho.
+    if nome == "Dijkstra":
+        if not math.isclose(
+            custo_total,
+            custo_calculado,
+            rel_tol=1e-9,
+            abs_tol=1e-9
+        ):
+            raise RuntimeError(
+                f"Custo incorreto no Dijkstra: "
+                f"retornado={custo_total}, calculado={custo_calculado}."
+            )
+
     return caminho
 
 def executar_perfil(nome, algoritmo, grafo, origem, destino):
@@ -59,12 +114,7 @@ def executar_perfil(nome, algoritmo, grafo, origem, destino):
     tempo_total = time.perf_counter() - inicio
 
     # Valida o resultado antes de gerar o relatório.
-    caminho = validar_resultado(
-        resultado,
-        nome,
-        origem,
-        destino,
-    )
+    caminho = validar_resultado(resultado, nome, grafo, origem, destino)
 
     print(f"\n{'=' * 60}")
     print(f"Algoritmo: {nome}")
@@ -118,6 +168,5 @@ def main():
                 origem,
                 destino,
             )
-
 if __name__ == "__main__":
     main()

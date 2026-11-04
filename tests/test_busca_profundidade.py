@@ -173,3 +173,55 @@ def test_dfs_nao_garante_o_caminho_com_menos_conexoes():
     assert caminho == ["S", "A", "B", "T"]
     assert len(caminho) - 1 > 2  # A rota S -> X -> T tem duas conexões.
     validar_caminho(grafo, caminho, "S", "T")
+
+def test_grafo_com_um_unico_ponto_retorna_o_proprio_ponto():
+    # Cria um grafo contendo somente um ponto.
+    grafo = Grafo()
+    grafo.adicionar_ponto("A")
+
+    # Verifica se a busca retorna o ponto quando origem e destino são iguais.
+    assert busca_profundidade(grafo, "A", "A") == ["A"]
+
+def test_encontra_destino_em_grafo_com_ciclos_e_ramificacoes():
+    # Cria um grafo com diferentes caminhos, ciclos e ramificações.
+    grafo = Grafo()
+
+    for ponto in ["A", "B", "C", "D", "E", "F", "G"]:
+        grafo.adicionar_ponto(ponto)
+
+    grafo.adicionar_conexao("A", "B", 1)
+    grafo.adicionar_conexao("A", "C", 1)
+    grafo.adicionar_conexao("B", "D", 1)
+    grafo.adicionar_conexao("D", "A", 1)
+    grafo.adicionar_conexao("C", "E", 1)
+    grafo.adicionar_conexao("E", "F", 1)
+    grafo.adicionar_conexao("F", "C", 1)
+    grafo.adicionar_conexao("F", "G", 1)
+
+    # Executa a busca entre a origem e o destino.
+    caminho = busca_profundidade(grafo, "A", "G")
+
+    # Verifica se o caminho encontrado é válido e não possui repetições.
+    assert caminho is not None
+    validar_caminho(grafo, caminho, "A", "G")
+    assert len(caminho) == len(set(caminho))
+
+def test_caminho_em_grafo_direcionado_respeita_todas_as_conexoes():
+    # Cria uma rede direcionada.
+    grafo = Grafo(direcionado=True)
+
+    for ponto in ["A", "B", "C"]:
+        grafo.adicionar_ponto(ponto)
+
+    # Adiciona conexões somente no sentido indicado.
+    grafo.adicionar_conexao("A", "B", 1)
+    grafo.adicionar_conexao("B", "C", 1)
+
+    # Busca um caminho respeitando o sentido das conexões.
+    caminho = busca_profundidade(grafo, "A", "C")
+
+    assert caminho == ["A", "B", "C"]
+    validar_caminho(grafo, caminho, "A", "C")
+
+    # A busca no sentido contrário não pode encontrar um caminho.
+    assert busca_profundidade(grafo, "C", "A") is None
