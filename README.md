@@ -2,7 +2,7 @@
 
 > **Sistema de Roteamento Inteligente para Mobilidade Urbana**
 
-Projeto desenvolvido pelo **Squad 1** como parte da plataforma conceitual **UrbanTech**, na disciplina de **Matemática Discreta e Algoritmos**.
+Projeto desenvolvido pelo **Squad 1** como parte da plataforma conceitual **UrbanTech**, na disciplina de **Matemática Computacional**.
 
 O MetroNet tem como objetivo representar uma rede de transporte urbano utilizando **grafos** e aplicar algoritmos para encontrar caminhos eficientes entre diferentes pontos da cidade.
 
@@ -22,7 +22,7 @@ A partir dessa representação, o sistema permite consultar a rede e executar al
 
 ## 🎯 Objetivos
 
-O MetroNet deverá permitir:
+O núcleo implementado permite:
 
 - Cadastrar pontos de transporte;
 - Cadastrar conexões entre pontos;
@@ -31,7 +31,7 @@ O MetroNet deverá permitir:
 - Executar **BFS**;
 - Executar **DFS**;
 - Executar **Dijkstra**;
-- Exibir o caminho encontrado;
+- Retornar a sequência do caminho encontrado;
 - Informar o custo total da rota;
 - Identificar quando não existe caminho entre dois pontos.
 
@@ -51,6 +51,8 @@ Também serão analisadas as complexidades dos algoritmos e seu comportamento co
 ---
 
 ## 🏗️ Estrutura do projeto
+
+> A árvore abaixo é a estrutura de referência do projeto. A cópia integrada revisada ainda não contém todos os diretórios e arquivos listados, como `app.py`; confira o conteúdo efetivo da pasta antes de tentar executá-los.
 
 ```text
 urban-tech-metronet/
@@ -125,7 +127,7 @@ Dependendo da evolução do projeto, poderão ser utilizados:
 
 ## 🧪 Testes
 
-O projeto contará com testes automatizados utilizando **pytest**.
+O projeto possui testes automatizados utilizando **pytest**.
 
 Entre os cenários previstos estão:
 
@@ -139,12 +141,13 @@ Entre os cenários previstos estão:
 - Peso inválido;
 - Nó inexistente;
 - Redes maiores.
+- Custo mínimo, empates de custo e pesos decimais no Dijkstra.
 
 ---
 
 ## 📊 Análise de desempenho
 
-O projeto também realizará uma análise da eficiência dos algoritmos.
+O projeto documenta a complexidade teórica dos algoritmos. A análise experimental de eficiência ainda precisa ser realizada.
 
 Serão considerados:
 
@@ -192,7 +195,7 @@ Merge
 
 ## 📚 Documentação
 
-A documentação do projeto será mantida na pasta `docs/`, contendo informações sobre:
+A documentação do projeto está organizada na pasta `docs/` e contém informações sobre:
 
 - Visão do produto;
 - Requisitos;
@@ -207,7 +210,7 @@ A documentação do projeto será mantida na pasta `docs/`, contendo informaçõ
 
 ## 🚀 Execução
 
-> Esta seção será atualizada conforme a implementação do projeto for concluída.
+> O repositório integrado revisado não contém `app.py` nem outra interface de execução. A demonstração dos algoritmos por uma interface ainda precisa ser definida pela equipe.
 
 ### Instalação
 
@@ -231,16 +234,10 @@ Instalação das dependências:
 pip install -r requirements.txt
 ```
 
-### Execução
-
-```bash
-python app.py
-```
-
 ### Testes
 
 ```bash
-pytest
+python -m pytest -v
 ```
 
 ---
@@ -264,25 +261,27 @@ pytest
 
 ## 📌 Status do projeto
 
-**Em desenvolvimento**
+**Núcleo de grafo e algoritmos implementado; validação final e análise experimental pendentes.**
 
-- [ ] Modelagem do grafo
-- [ ] Implementação das estruturas de dados
-- [ ] Implementação de BFS
-- [ ] Implementação de DFS
-- [ ] Implementação de Dijkstra
-- [ ] Validações e tratamento de exceções
-- [ ] Testes automatizados
-- [ ] Análise de complexidade
+- [x] Modelagem do grafo
+- [x] Implementação das estruturas de dados
+- [x] Implementação de BFS
+- [x] Implementação de DFS
+- [x] Implementação de Dijkstra
+- [x] Validações e tratamento de exceções
+- [x] Testes automatizados criados e executados na cópia integrada de revisão
+- [x] Análise de complexidade teórica
 - [ ] Profiling
 - [ ] Gráficos de desempenho
-- [ ] Documentação
+- [x] Documentação do produto, requisitos, modelagem, arquitetura, algoritmos, complexidade, testes e resultados
 - [ ] Release `v1.0.0`
+
+Na cópia integrada formada pelos ZIPs recebidos, a última execução apresentou **50 testes aprovados em 0,18 segundo**. Esse snapshot contém 12 testes da DFS; o integrante responsável informou depois uma versão com 13. A suíte final precisa ser executada novamente com a DFS atualizada antes do commit.
 
 ---
 
 ## 📄 Licença
 
-Este projeto está sendo desenvolvido para fins acadêmicos no contexto da disciplina de **Matemática Discreta e Algoritmos**.
+Este projeto foi desenvolvido para fins acadêmicos no contexto da disciplina de **Matemática Computacional**.
 
-A licença do projeto será definida posteriormente.
+A licença MIT está especificada no arquivo `LICENSE`.
