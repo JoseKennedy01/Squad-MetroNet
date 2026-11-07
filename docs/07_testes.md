@@ -222,3 +222,13 @@ Resultado observado: **19 testes aprovados em 0,10 segundo**, sem falhas. Os nov
 O texto do custo exibido foi ajustado para “Custo da rota encontrada”. Nos testes da interface, a mensagem é conferida para os caminhos calculados por BFS, DFS e Dijkstra.
 
 A suíte completa ainda precisa ser executada novamente na Meta 30. O último resultado integrado de 116 testes, registrado na seção 10, antecede as alterações das metas 25 a 28 e não representa o total atual.
+
+## 13. Suíte integrada desta revisão — 07/11/2026
+
+A suíte foi executada na pasta raiz com:
+
+```text
+python -m pytest -q -p no:cacheprovider
+```
+
+Resultado observado: **132 testes aprovados em 0,33 segundo**, sem falhas. A primeira tentativa nesta sessão não conseguiu criar os diretórios temporários de 20 testes de dados no ambiente restrito; a repetição autorizada com acesso aos temporários executou a suíte completa. O resultado de 132 testes corresponde à execução bem-sucedida. O tempo é da suíte funcional, não dos benchmarks dos algoritmos.

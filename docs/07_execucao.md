@@ -63,11 +63,11 @@ Os scripts de benchmark e profiling ficam em `reports/profiling/` e são executa
 
 ## 6. Roteiro curto de demonstração
 
-Inicie o programa com `python app.py` e digite as opções abaixo, uma por vez. A rede usa conexões não direcionadas.
+Inicie o programa com `python app.py` e digite as opções abaixo, uma por vez. A rede usa conexões não direcionadas. A sequência reproduz o exemplo do PDF: Dijkstra encontra `EST01 -> EST04 -> EST07 -> EST09`, com custo total `14`.
 
 ### Cadastrar os pontos
 
-Escolha `1` e cadastre, nesta ordem: `A`, `B`, `C` e `D`.
+Escolha `1` e cadastre, nesta ordem: `EST01`, `EST02`, `EST03`, `EST04`, `EST05`, `EST06`, `EST07`, `EST08` e `EST09`.
 
 ### Cadastrar as conexões
 
@@ -75,22 +75,24 @@ Escolha `2` para cada conexão:
 
 | Origem | Destino | Peso |
 |---|---|---:|
-| A | B | 10 |
-| A | C | 2 |
-| C | B | 3 |
+| EST01 | EST04 | 5 |
+| EST04 | EST07 | 4 |
+| EST07 | EST09 | 5 |
+| EST01 | EST02 | 10 |
+| EST02 | EST09 | 10 |
 
-O ponto `D` ficará sem conexões para demonstrar o caso sem rota.
+Os pontos `EST03`, `EST05`, `EST06` e `EST08` ficam sem conexões.
 
-### Comparar as buscas entre A e B
+### Comparar as buscas entre EST01 e EST09
 
-Escolha `4` para buscar uma rota, informe origem `A` e destino `B`, e selecione:
+Escolha `4` para buscar uma rota, informe origem `EST01` e destino `EST09`, e selecione:
 
-1. **BFS (opção 1):** mostra `A -> B`, custo `10`. Escolhe o caminho com menos conexões.
-2. **DFS (opção 2):** nesta ordem de cadastro, mostra `A -> B`, custo `10`. A DFS retorna um caminho válido, mas não promete o menor custo.
-3. **Dijkstra (opção 3):** mostra `A -> C -> B`, custo `5`, pois essa rota tem o menor custo acumulado.
+1. **BFS (opção 1):** mostra `EST01 -> EST02 -> EST09`, custo `20`, pois esse caminho tem menos conexões que o caminho pela sequência do exemplo do PDF.
+2. **DFS (opção 2):** com esta ordem de cadastro, encontra `EST01 -> EST04 -> EST07 -> EST09`, custo `14`. A DFS retorna um caminho válido, mas não promete o menor custo.
+3. **Dijkstra (opção 3):** mostra `EST01 -> EST04 -> EST07 -> EST09`, custo `14`, a rota de menor custo acumulado e a saída esperada no exemplo do PDF.
 
 ### Demonstrar destino sem caminho
 
-Escolha `4`, selecione BFS (`1`), informe origem `A` e destino `D`. O programa deve informar que não existe caminho entre esses pontos.
+Escolha `4`, selecione BFS (`1`), informe origem `EST01` e destino `EST03`. O programa deve informar que não existe caminho entre esses pontos.
 
 Para encerrar, escolha `0`. Os resultados acima foram conferidos no fluxo de terminal do aplicativo. A ordem de um caminho DFS pode depender da ordem dos vizinhos cadastrados.

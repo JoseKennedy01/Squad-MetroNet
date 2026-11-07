@@ -52,7 +52,7 @@ Também serão analisadas as complexidades dos algoritmos e seu comportamento co
 
 ## 🏗️ Estrutura do projeto
 
-> A árvore abaixo é a estrutura de referência do projeto. A cópia integrada revisada ainda não contém todos os diretórios e arquivos listados, como `app.py`; confira o conteúdo efetivo da pasta antes de tentar executá-los.
+> A árvore abaixo corresponde ao checkout atual. Notebooks e `data/processed/` são referências opcionais; os módulos e artefatos presentes estão listados nas seções seguintes.
 
 ```text
 urban-tech-metronet/
@@ -69,8 +69,10 @@ urban-tech-metronet/
 │   ├── 04_arquitetura.md
 │   ├── 05_algoritmos.md
 │   ├── 06_complexidade.md
+│   ├── 07_execucao.md
 │   ├── 07_testes.md
-│   └── 08_resultados.md
+│   ├── 08_resultados.md
+│   └── 09_dados.md
 │
 ├── src/
 │   ├── __init__.py
@@ -81,10 +83,13 @@ urban-tech-metronet/
 │   └── utils/
 │
 ├── tests/
-│   ├── test_models.py
-│   ├── test_algorithms.py
-│   ├── test_services.py
-│   └── test_edge_cases.py
+│   ├── test_app.py
+│   ├── test_busca_largura.py
+│   ├── test_busca_profundidade.py
+│   ├── test_dados.py
+│   ├── test_dijkstra.py
+│   ├── test_grafo.py
+│   └── test_services.py
 │
 ├── data/
 │   ├── raw/
@@ -147,16 +152,7 @@ Entre os cenários previstos estão:
 
 ## 📊 Análise de desempenho
 
-O projeto documenta a complexidade teórica dos algoritmos. A análise experimental de eficiência ainda precisa ser realizada.
-
-Serão considerados:
-
-- Complexidade teórica;
-- Tempo de execução;
-- Consumo de memória;
-- Profiling;
-- Gráficos de desempenho;
-- Comparação entre comportamento teórico e experimental.
+A análise experimental está registrada em `docs/08_resultados.md`, com metodologia, medições, gráficos e limitações. Os scripts, CSV e perfis ficam em `reports/profiling/`; os gráficos ficam em `reports/figures/`.
 
 ---
 
@@ -210,7 +206,7 @@ A documentação do projeto está organizada na pasta `docs/` e contém informa�
 
 ## 🚀 Execução
 
-> O repositório integrado revisado não contém `app.py` nem outra interface de execução. A demonstração dos algoritmos por uma interface ainda precisa ser definida pela equipe.
+> A interface de terminal está em `app.py`. O guia `docs/07_execucao.md` explica como executá-la e reproduzir a demonstração alinhada ao exemplo do PDF.
 
 ### Instalação
 
@@ -261,7 +257,7 @@ python -m pytest -v
 
 ## 📌 Status do projeto
 
-**Núcleo de grafo e algoritmos implementado; validação final e análise experimental pendentes.**
+**Núcleo, interface, dados, testes e análise experimental implementados.** A suíte integrada desta revisão aprovou 132 testes em 0,33 segundo, em 07/11/2026.
 
 - [x] Modelagem do grafo
 - [x] Implementação das estruturas de dados
@@ -269,14 +265,16 @@ python -m pytest -v
 - [x] Implementação de DFS
 - [x] Implementação de Dijkstra
 - [x] Validações e tratamento de exceções
-- [x] Testes automatizados criados e executados na cópia integrada de revisão
+- [x] Testes automatizados criados e executados no checkout atual
 - [x] Análise de complexidade teórica
-- [ ] Profiling
-- [ ] Gráficos de desempenho
-- [x] Documentação do produto, requisitos, modelagem, arquitetura, algoritmos, complexidade, testes e resultados
-- [ ] Release `v1.0.0`
+- [x] Profiling com `cProfile`
+- [x] Gráficos de tempo e memória
+- [x] Documentação do produto, requisitos, modelagem, arquitetura, algoritmos, complexidade, execução, testes, dados e resultados
+- [x] Roteiro de demonstração alinhado ao exemplo do PDF
+- [ ] Apresentação, demonstração ao vivo e defesa técnica individual da equipe
+- [ ] Release `v1.0.0` (aguarda revisão e autorização da equipe)
 
-Na cópia integrada formada pelos ZIPs recebidos, a última execução apresentou **50 testes aprovados em 0,18 segundo**. Esse snapshot contém 12 testes da DFS; o integrante responsável informou depois uma versão com 13. A suíte final precisa ser executada novamente com a DFS atualizada antes do commit.
+A execução atual desta revisão usou `python -m pytest -q -p no:cacheprovider` e apresentou **132 testes aprovados em 0,33 segundo**, sem falhas. As atualizações abaixo preservam resultados históricos de snapshots anteriores; eles não devem ser somados nem apresentados como o resultado atual.
 
 ---
 

@@ -10,7 +10,7 @@ Os resultados devem ser interpretados considerando a versão integrada do projet
 
 A suíte automatizada utiliza `pytest` para verificar o comportamento do grafo, dos algoritmos e dos módulos de dados.
 
-Na última execução registrada durante esta revisão, o comando `python -m pytest` apresentou **132 testes aprovados em 0,47 segundo, sem falhas**.
+Na execução integrada desta revisão, em 07/11/2026, o comando `python -m pytest -q -p no:cacheprovider` apresentou **132 testes aprovados em 0,33 segundo, sem falhas**.
 
 Os cenários cobertos incluem:
 

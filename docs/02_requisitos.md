@@ -54,7 +54,7 @@ O documento principal também determina (p. 2–4 e 8–10):
 - entregáveis finais como código-fonte, README, documentação, testes, evidências de execução, análise Big-O, profiling, dados sintéticos, apresentação e demonstração;
 - critério de conclusão que inclui implementação, execução, docstring, teste criado e executado, consideração de caso de borda, commit e revisão por outro integrante (Definition of Done, p. 8).
 
-As medições de desempenho, gráficos e profiling ainda devem ser registrados apenas depois de serem realmente executados. Os tempos de uma execução do pytest não substituem esse experimento.
+As medições de desempenho, gráficos e profiling estão registrados em `docs/08_resultados.md` e nos artefatos de `reports/`. Os tempos da suíte pytest são uma verificação funcional e não substituem os experimentos de desempenho.
 
 ## 6. Tecnologias e dependências
 
@@ -78,6 +78,6 @@ O PDF organiza o trabalho acadêmico pelas semanas 8 a 15: modelagem na semana 9
 
 ## 10. Pontos a confirmar
 
-- A especificação propõe estrutura de repositório com `app.py`, serviços, dados, notebooks e relatórios (p. 2–3), mas os ZIPs recebidos não incluem todos esses itens. Confirmar com o grupo quais são obrigatórios para a entrega e quais são apenas estrutura de referência.
-- O PDF pede uma saída de demonstração com origem `EST01`, destino `EST09`, rota `EST01 → EST04 → EST07 → EST09` e custo total `14` (seção A.11, p. 7). Os dados que produzem esse exemplo devem estar disponíveis e ser testados antes da defesa.
+- A estrutura de diretórios do PDF é uma referência de organização. O checkout atual contém `app.py`, serviços, dados e relatórios; notebooks e `data/processed/` não são necessários para os requisitos funcionais explícitos.
+- O PDF pede uma saída de demonstração com origem `EST01`, destino `EST09`, rota `EST01 → EST04 → EST07 → EST09` e custo total `14` (seção A.11, p. 7). O roteiro em `docs/07_execucao.md` usa pesos sintéticos escolhidos para reproduzir essa saída; o fluxo completo foi conferido no aplicativo de terminal.
 - A especificação descreve peso como custo, tempo ou distância. Para Dijkstra, o peso usado precisa representar uma grandeza aditiva e não negativa; essa interpretação deve ser explicada na apresentação.
