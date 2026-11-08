@@ -30,7 +30,7 @@ O menu permite cadastrar pontos, cadastrar conexões ponderadas, consultar a red
 
 Na etapa de busca, o menu também descreve o objetivo de cada opção: BFS procura um caminho com menos conexões, DFS explora a rede em profundidade e Dijkstra procura uma rota de menor custo acumulado.
 
-Após a busca, o programa exibe o caminho encontrado e o campo "Custo da rota encontrada". Para BFS e DFS, o custo corresponde ao caminho retornado; somente Dijkstra busca minimizar esse custo.
+Após uma busca com rota, o programa exibe o caminho encontrado, o número de conexões na rota e o campo "Custo da rota encontrada". Para BFS e DFS, o custo corresponde ao caminho retornado; somente Dijkstra busca minimizar esse custo.
 
 A rede começa vazia. Os cadastros feitos pelo menu permanecem em memória somente durante aquela execução. O menu usa uma rede não direcionada. Pesos decimais podem ser digitados com vírgula, como `2,5`.
 
@@ -87,9 +87,9 @@ Os pontos `EST03`, `EST05`, `EST06` e `EST08` ficam sem conexões.
 
 Escolha `4` para buscar uma rota, informe origem `EST01` e destino `EST09`, e selecione:
 
-1. **BFS (opção 1):** mostra `EST01 -> EST02 -> EST09`, custo `20`, pois esse caminho tem menos conexões que o caminho pela sequência do exemplo do PDF.
-2. **DFS (opção 2):** com esta ordem de cadastro, encontra `EST01 -> EST04 -> EST07 -> EST09`, custo `14`. A DFS retorna um caminho válido, mas não promete o menor custo.
-3. **Dijkstra (opção 3):** mostra `EST01 -> EST04 -> EST07 -> EST09`, custo `14`, a rota de menor custo acumulado e a saída esperada no exemplo do PDF.
+1. **BFS (opção 1):** mostra `EST01 -> EST02 -> EST09`, 2 conexões, custo `20`, pois esse caminho tem menos conexões que o caminho pela sequência do exemplo do PDF.
+2. **DFS (opção 2):** com esta ordem de cadastro, encontra `EST01 -> EST04 -> EST07 -> EST09`, 3 conexões, custo `14`. A DFS retorna um caminho válido, mas não promete o menor custo.
+3. **Dijkstra (opção 3):** mostra `EST01 -> EST04 -> EST07 -> EST09`, 3 conexões, custo `14`, a rota de menor custo acumulado e a saída esperada no exemplo do PDF.
 
 ### Demonstrar destino sem caminho
 

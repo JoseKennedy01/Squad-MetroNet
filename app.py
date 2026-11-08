@@ -87,6 +87,7 @@ def buscar_rota(grafo):
 
     caminho, custo = resultado
     print(f"Caminho encontrado: {' -> '.join(caminho)}")
+    print(f"Número de conexões na rota: {len(caminho) - 1}")
     print(f"Custo da rota encontrada: {custo:g}")
 
 

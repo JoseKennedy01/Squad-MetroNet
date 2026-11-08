@@ -23,13 +23,13 @@ Os códigos RF01–RF10 estão listados na tabela da seção A.5 do PDF (p. 6).
 | RF05 | Executar BFS | Implementado em `src/algorithms/busca_largura.py`; encontra caminho com o menor número de conexões. |
 | RF06 | Executar DFS | Implementado em `src/algorithms/busca_profundidade.py`; encontra um caminho, sem garantir que seja o mais curto ou barato. |
 | RF07 | Executar Dijkstra | Implementado em `src/algorithms/dijkstra.py`; retorna caminho e custo mínimo para pesos não negativos. |
-| RF08 | Exibir o caminho encontrado | Os algoritmos retornam a sequência de pontos; a apresentação desse retorno em uma interface/CLI precisa ser confirmada no fluxo final do projeto. |
+| RF08 | Exibir o caminho encontrado | Os algoritmos retornam a sequência de pontos; a interface de terminal em `app.py` exibe a sequência do caminho, a quantidade de conexões e o custo. |
 | RF09 | Informar o custo total | Dijkstra retorna o custo total junto com o caminho. BFS e DFS não escolhem rotas pelo peso. |
 | RF10 | Informar quando não existir caminho | BFS e DFS retornam `None` quando os pontos existem, mas não há rota; Dijkstra segue o mesmo contrato. |
 
 ### 3.1. Observação sobre a saída
 
-O PDF lista como saída rota, distância/custo, número de conexões e sequência de nós (seção A.3, p. 5). O contrato implementado para Dijkstra é `(caminho, custo_total)`. A BFS e a DFS retornam o caminho; a quantidade de conexões pode ser calculada como `len(caminho) - 1`. A especificação não define um formato único de retorno para todos os algoritmos.
+O PDF lista como saída rota, distância/custo, número de conexões e sequência de nós (seção A.3, p. 5). O contrato implementado para Dijkstra é `(caminho, custo_total)`. A BFS e a DFS retornam o caminho; a quantidade de conexões é exibida pela interface como `len(caminho) - 1`. A especificação não define um formato único de retorno para todos os algoritmos.
 
 ## 4. Requisitos não funcionais explícitos
 

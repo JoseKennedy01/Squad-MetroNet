@@ -17,6 +17,7 @@ def test_menu_cadastra_rede_e_mostra_caminho(monkeypatch, capsys):
 
     saida = capsys.readouterr().out
     assert "Caminho encontrado: A -> B -> C" in saida
+    assert "Número de conexões na rota: 2" in saida
     assert "Custo da rota encontrada: 5" in saida
     assert "Programa encerrado." in saida
 
@@ -60,6 +61,7 @@ def test_menu_aceita_peso_decimal_com_virgula(monkeypatch, capsys):
 
     saida = capsys.readouterr().out
     assert "Caminho encontrado: A -> B" in saida
+    assert "Número de conexões na rota: 1" in saida
     assert "Custo da rota encontrada: 2.5" in saida
 
 def test_menu_executa_dfs_e_mostra_caminho_e_custo(monkeypatch, capsys):
@@ -78,6 +80,7 @@ def test_menu_executa_dfs_e_mostra_caminho_e_custo(monkeypatch, capsys):
 
     saida = capsys.readouterr().out
     assert "Caminho encontrado: A -> B -> C" in saida
+    assert "Número de conexões na rota: 2" in saida
     assert "Custo da rota encontrada: 5" in saida
 
 
@@ -98,6 +101,7 @@ def test_menu_dijkstra_mostra_rota_de_menor_custo(monkeypatch, capsys):
 
     saida = capsys.readouterr().out
     assert "Caminho encontrado: A -> C -> B" in saida
+    assert "Número de conexões na rota: 2" in saida
     assert "Custo da rota encontrada: 5" in saida
 
 

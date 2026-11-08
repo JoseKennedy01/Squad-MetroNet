@@ -32,7 +32,7 @@ O núcleo implementado permite:
 - Executar **DFS**;
 - Executar **Dijkstra**;
 - Retornar a sequência do caminho encontrado;
-- Informar o custo total da rota;
+- Informar o número de conexões e o custo total da rota;
 - Identificar quando não existe caminho entre dois pontos.
 
 ---
