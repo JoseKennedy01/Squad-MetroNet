@@ -52,7 +52,7 @@ Também serão analisadas as complexidades dos algoritmos e seu comportamento co
 
 ## 🏗️ Estrutura do projeto
 
-> A árvore abaixo é a estrutura de referência do projeto. A cópia integrada revisada ainda não contém todos os diretórios e arquivos listados, como `app.py`; confira o conteúdo efetivo da pasta antes de tentar executá-los.
+> A árvore abaixo é a estrutura de referência do projeto; os arquivos presentes devem ser conferidos na raiz do repositório.
 
 ```text
 urban-tech-metronet/
@@ -106,6 +106,7 @@ urban-tech-metronet/
 ## 🛠️ Tecnologias
 
 - **Python**
+- **Flask** (API local para a demonstração web)
 - **pytest**
 - **matplotlib**
 - **cProfile**
@@ -210,7 +211,7 @@ A documentação do projeto está organizada na pasta `docs/` e contém informa�
 
 ## 🚀 Execução
 
-> O repositório integrado revisado não contém `app.py` nem outra interface de execução. A demonstração dos algoritmos por uma interface ainda precisa ser definida pela equipe.
+O MetroNet inclui uma interface demonstrativa servida pelo Flask. A rede começa com dados de exemplo; estações e conexões alteradas ficam em memória enquanto o servidor estiver executando.
 
 ### Instalação
 
@@ -233,6 +234,16 @@ Instalação das dependências:
 ```bash
 pip install -r requirements.txt
 ```
+
+### Interface web
+
+Na raiz do projeto, inicie o servidor:
+
+```bash
+python app.py
+```
+
+Abra `http://127.0.0.1:5000` no navegador. A interface consulta `/rota`, `/estacoes` e `/conexoes` no mesmo servidor Flask.
 
 ### Testes
 

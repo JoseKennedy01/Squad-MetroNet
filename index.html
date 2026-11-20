@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101a2b">
+    <meta name="description" content="Demonstração visual do MetroNet: compare BFS, DFS e Dijkstra em uma rede de estações ponderada.">
+    <title>MetroNet — laboratório de rotas</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="MetroNet, início">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" focusable="false">
+            <path d="M8 30 18 10l7 14 7-14" />
+            <circle cx="8" cy="30" r="3" />
+            <circle cx="18" cy="10" r="3" />
+            <circle cx="25" cy="24" r="3" />
+            <circle cx="32" cy="10" r="3" />
+          </svg>
+        </span>
+        <span class="brand__name">Metro<span>Net</span></span>
+      </a>
+      <div class="topbar__meta">
+        <span class="project-tag"><span class="project-tag__dot"></span> Projeto acadêmico</span>
+        <span class="topbar__course">Matemática Computacional</span>
+      </div>
+    </header>
+
+    <main id="inicio" class="page-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <div class="intro__copy">
+          <p class="eyebrow"><span class="eyebrow__line"></span> Laboratório de algoritmos</p>
+          <h1 id="page-title">Uma rede. <span>Três caminhos.</span></h1>
+          <p class="intro__description">Explore como BFS, DFS e Dijkstra percorrem a mesma rede e compare o caminho, o custo e os nós visitados.</p>
+        </div>
+        <div class="network-summary" aria-label="Resumo da rede de demonstração">
+          <div class="network-summary__item"><strong id="network-station-count">09</strong><span>estações</span></div>
+          <span class="network-summary__divider" aria-hidden="true"></span>
+          <div class="network-summary__item"><strong id="network-edge-count">16</strong><span>conexões</span></div>
+          <span class="network-summary__divider" aria-hidden="true"></span>
+          <div class="network-summary__item"><strong>↔</strong><span>não direcionado</span></div>
+        </div>
+      </section>
+
+      <section class="controls-panel panel" aria-labelledby="controls-title">
+        <div class="controls-panel__title">
+          <span class="section-index">01</span>
+          <div>
+            <h2 id="controls-title">Configure a busca</h2>
+            <p>Escolha os pontos e o critério de percurso.</p>
+          </div>
+        </div>
+        <!-- O JavaScript envia a busca à API Flask; os caminhos vêm dos algoritmos Python. -->
+        <form id="route-form" class="route-form">
+          <label class="field" for="origem">
+            <span class="field__label">Origem</span>
+            <span class="select-wrap">
+              <span class="field__station-dot field__station-dot--origin" aria-hidden="true"></span>
+              <select id="origem" name="origem">
+                <option value="EST01" selected>EST01 · Terminal Central</option>
+                <option value="EST02">EST02 · Museu</option>
+                <option value="EST03">EST03 · Universidade</option>
+                <option value="EST04">EST04 · Centro</option>
+                <option value="EST05">EST05 · Mercado</option>
+                <option value="EST06">EST06 · Hospital</option>
+                <option value="EST07">EST07 · Parque</option>
+                <option value="EST08">EST08 · Aeroporto</option>
+                <option value="EST09">EST09 · Rodoviária</option>
+              </select>
+            </span>
+          </label>
+
+          <span class="route-form__connector" aria-hidden="true">→</span>
+
+          <label class="field" for="destino">
+            <span class="field__label">Destino</span>
+            <span class="select-wrap">
+              <span class="field__station-dot field__station-dot--destination" aria-hidden="true"></span>
+              <select id="destino" name="destino">
+                <option value="EST01">EST01 · Terminal Central</option>
+                <option value="EST02">EST02 · Museu</option>
+                <option value="EST03">EST03 · Universidade</option>
+                <option value="EST04">EST04 · Centro</option>
+                <option value="EST05">EST05 · Mercado</option>
+                <option value="EST06">EST06 · Hospital</option>
+                <option value="EST07">EST07 · Parque</option>
+                <option value="EST08">EST08 · Aeroporto</option>
+                <option value="EST09" selected>EST09 · Rodoviária</option>
+              </select>
+            </span>
+          </label>
+
+          <label class="field field--algorithm" for="algoritmo">
+            <span class="field__label">Algoritmo</span>
+            <span class="select-wrap select-wrap--plain">
+              <select id="algoritmo" name="algoritmo">
+                <option value="bfs">BFS · Busca em largura</option>
+                <option value="dfs">DFS · Busca em profundidade</option>
+                <option value="dijkstra" selected>Dijkstra · Menor custo</option>
+              </select>
+            </span>
+          </label>
+
+          <button class="submit-button" type="submit">
+            <span>Traçar rota</span>
+            <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10h11M10 5l5 5-5 5" /></svg>
+          </button>
+        </form>
+      </section>
+
+      <details class="connection-manager panel" id="connection-manager">
+        <summary class="connection-manager__summary">
+          <span class="section-index">02</span>
+          <span class="connection-manager__copy"><strong>Estações e conexões</strong><small>Cadastre paradas de metrô ou carro e monte as ligações da rede.</small></span>
+          <span class="connection-manager__toggle" aria-hidden="true">+</span>
+        </summary>
+        <div class="connection-manager__body">
+          <div class="station-manager">
+            <div class="connection-manager__list-heading">
+              <div><h3>Adicionar estação</h3><p>Estações novas aparecem no mapa e nos seletores de rota.</p></div>
+            </div>
+            <form id="station-form" class="station-form">
+              <label class="field" for="station-name">
+                <span class="field__label">Nome da estação</span>
+                <input id="station-name" name="nome" type="text" maxlength="32" placeholder="Ex.: Praça Nova" required>
+              </label>
+              <label class="field" for="station-type">
+                <span class="field__label">Modalidade</span>
+                <span class="select-wrap select-wrap--plain"><select id="station-type" name="tipo"><option value="metro">Metrô</option><option value="carro">Carro</option></select></span>
+              </label>
+              <button class="submit-button station-form__submit" type="submit"><span>Adicionar estação</span><span aria-hidden="true">+</span></button>
+            </form>
+            <div class="connection-manager__list-heading station-list-heading">
+              <div><h3>Estações personalizadas</h3><p>Remova uma estação para excluí-la também das conexões.</p></div>
+              <span class="connection-total" id="custom-station-total">0 estações</span>
+            </div>
+            <ul class="custom-station-list" id="custom-station-list" aria-label="Estações adicionadas"></ul>
+          </div>
+
+          <div class="connection-manager__list-heading connection-form-heading">
+            <div><h3>Adicionar conexão</h3><p>Escolha duas estações e informe o peso da ligação.</p></div>
+          </div>
+          <form id="connection-form" class="connection-form">
+            <label class="field" for="connection-origin">
+              <span class="field__label">Estação de origem</span>
+              <span class="select-wrap select-wrap--plain"><select id="connection-origin" name="origem" required>
+                <option value="EST01">EST01 · Terminal</option><option value="EST02">EST02 · Museu</option><option value="EST03">EST03 · Universidade</option><option value="EST04">EST04 · Centro</option><option value="EST05">EST05 · Mercado</option><option value="EST06">EST06 · Hospital</option><option value="EST07">EST07 · Parque</option><option value="EST08">EST08 · Aeroporto</option><option value="EST09">EST09 · Rodoviária</option>
+              </select></span>
+            </label>
+            <label class="field" for="connection-destination">
+              <span class="field__label">Estação conectada</span>
+              <span class="select-wrap select-wrap--plain"><select id="connection-destination" name="destino" required>
+                <option value="EST01">EST01 · Terminal</option><option value="EST02">EST02 · Museu</option><option value="EST03">EST03 · Universidade</option><option value="EST04">EST04 · Centro</option><option value="EST05">EST05 · Mercado</option><option value="EST06">EST06 · Hospital</option><option value="EST07">EST07 · Parque</option><option value="EST08">EST08 · Aeroporto</option><option value="EST09" selected>EST09 · Rodoviária</option>
+              </select></span>
+            </label>
+            <label class="field connection-form__weight" for="connection-weight">
+              <span class="field__label">Peso</span>
+              <input id="connection-weight" name="peso" type="number" min="0" step="any" required value="3">
+            </label>
+            <button class="submit-button connection-form__submit" type="submit"><span>Adicionar conexão</span><span aria-hidden="true">+</span></button>
+          </form>
+          <div class="connection-manager__list-heading">
+            <div><h3>Conexões cadastradas</h3><p>Grafo não direcionado: remover vale para os dois sentidos.</p></div>
+            <div class="connection-manager__actions">
+              <span class="connection-total" id="connection-total">16 conexões</span>
+              <button class="restore-button" id="restore-demo" type="button">Restaurar exemplo</button>
+            </div>
+          </div>
+          <p class="connection-status" id="connection-status" role="status" aria-live="polite">Conectando ao grafo Python…</p>
+          <!-- Os botões chamam a API Flask e redesenham o SVG após a confirmação do servidor. -->
+          <ul class="connection-list" id="connection-list" aria-label="Conexões cadastradas"></ul>
+        </div>
+      </details>
+
+      <section class="explorer-grid" aria-label="Mapa e resultado da rota">
+        <article class="map-panel panel" aria-labelledby="map-title">
+          <div class="panel-heading">
+            <div class="panel-heading__title">
+              <span class="section-index">03</span>
+              <div>
+                <h2 id="map-title">Mapa da rede</h2>
+                <p>Pesos das conexões em unidades de custo</p>
+              </div>
+            </div>
+            <span class="algo-badge algo-badge--dijkstra" id="active-algorithm">Dijkstra ativo</span>
+          </div>
+
+          <div class="map-canvas">
+            <!-- JS: atualiza data-algo para bfs, dfs ou dijkstra; nós e conexões recebem as classes de estado. -->
+            <svg id="route-map" class="route-map" viewBox="0 0 880 520" role="img" aria-labelledby="svg-title svg-description" data-algo="dijkstra" preserveAspectRatio="xMidYMid meet">
+              <title id="svg-title">Rede MetroNet com nove estações e dezesseis conexões</title>
+              <desc id="svg-description">Grafo não direcionado com conexões ponderadas. Trace uma rota para destacá-la.</desc>
+              <defs>
+                <pattern id="map-grid" width="28" height="28" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r="1" fill="#9eb1ce" fill-opacity=".16" />
+                </pattern>
+                <filter id="route-glow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+              </defs>
+              <rect class="map-grid-bg" x="0" y="0" width="880" height="520" rx="18" />
+
+              <g class="connections" aria-label="Conexões entre as estações">
+                <g class="connection is-visited" data-from="EST01" data-to="EST02" data-peso="3" aria-label="Conexão EST01 para EST02, peso 3">
+                  <line class="connection__line" x1="100" y1="270" x2="220" y2="105" />
+                  <g class="weight-tag" transform="translate(157 177)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">3</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST01" data-to="EST03" data-peso="4" aria-label="Conexão EST01 para EST03, peso 4">
+                  <line class="connection__line" x1="100" y1="270" x2="220" y2="430" />
+                  <g class="weight-tag" transform="translate(155 346)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">4</text></g>
+                </g>
+                <g class="connection is-path" data-from="EST01" data-to="EST04" data-peso="5" aria-label="Conexão EST01 para EST04, peso 5">
+                  <line class="connection__line" x1="100" y1="270" x2="390" y2="205" />
+                  <g class="weight-tag" transform="translate(245 234)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">5</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST02" data-to="EST04" data-peso="4" aria-label="Conexão EST02 para EST04, peso 4">
+                  <line class="connection__line" x1="220" y1="105" x2="390" y2="205" />
+                  <g class="weight-tag" transform="translate(302 145)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">4</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST03" data-to="EST05" data-peso="2" aria-label="Conexão EST03 para EST05, peso 2">
+                  <line class="connection__line" x1="220" y1="430" x2="390" y2="400" />
+                  <g class="weight-tag" transform="translate(305 405)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">2</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST03" data-to="EST04" data-peso="6" aria-label="Conexão EST03 para EST04, peso 6">
+                  <line class="connection__line" x1="220" y1="430" x2="390" y2="205" />
+                  <g class="weight-tag" transform="translate(303 318)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">6</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST04" data-to="EST05" data-peso="3" aria-label="Conexão EST04 para EST05, peso 3">
+                  <line class="connection__line" x1="390" y1="205" x2="390" y2="400" />
+                  <g class="weight-tag" transform="translate(390 305)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">3</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST04" data-to="EST06" data-peso="7" aria-label="Conexão EST04 para EST06, peso 7">
+                  <line class="connection__line" x1="390" y1="205" x2="570" y2="410" />
+                  <g class="weight-tag" transform="translate(482 304)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">7</text></g>
+                </g>
+                <g class="connection is-path" data-from="EST04" data-to="EST07" data-peso="4" aria-label="Conexão EST04 para EST07, peso 4">
+                  <line class="connection__line" x1="390" y1="205" x2="610" y2="195" />
+                  <g class="weight-tag" transform="translate(500 183)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">4</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST05" data-to="EST06" data-peso="2" aria-label="Conexão EST05 para EST06, peso 2">
+                  <line class="connection__line" x1="390" y1="400" x2="570" y2="410" />
+                  <g class="weight-tag" transform="translate(480 426)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">2</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST05" data-to="EST08" data-peso="8" aria-label="Conexão EST05 para EST08, peso 8">
+                  <line class="connection__line" x1="390" y1="400" x2="740" y2="370" />
+                  <g class="weight-tag" transform="translate(565 371)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">8</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST06" data-to="EST07" data-peso="3" aria-label="Conexão EST06 para EST07, peso 3">
+                  <line class="connection__line" x1="570" y1="410" x2="610" y2="195" />
+                  <g class="weight-tag" transform="translate(607 303)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">3</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST06" data-to="EST08" data-peso="2" aria-label="Conexão EST06 para EST08, peso 2">
+                  <line class="connection__line" x1="570" y1="410" x2="740" y2="370" />
+                  <g class="weight-tag" transform="translate(660 407)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">2</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST07" data-to="EST08" data-peso="2" aria-label="Conexão EST07 para EST08, peso 2">
+                  <line class="connection__line" x1="610" y1="195" x2="740" y2="370" />
+                  <g class="weight-tag" transform="translate(690 285)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">2</text></g>
+                </g>
+                <g class="connection is-path" data-from="EST07" data-to="EST09" data-peso="5" aria-label="Conexão EST07 para EST09, peso 5">
+                  <line class="connection__line" x1="610" y1="195" x2="770" y2="105" />
+                  <g class="weight-tag" transform="translate(690 140)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">5</text></g>
+                </g>
+                <g class="connection is-visited" data-from="EST08" data-to="EST09" data-peso="6" aria-label="Conexão EST08 para EST09, peso 6">
+                  <line class="connection__line" x1="740" y1="370" x2="770" y2="105" />
+                  <g class="weight-tag" transform="translate(776 241)"><rect x="-17" y="-12" width="34" height="24" rx="8" /><text y="4">6</text></g>
+                </g>
+              </g>
+
+              <g class="stations" aria-label="Estações">
+                <g class="station is-origin is-visited is-path" data-id="EST01" data-x="100" data-y="270" data-nome="Terminal" transform="translate(100 270)">
+                  <title>EST01 · Terminal Central · origem</title><circle class="station__halo" r="25" /><circle class="station__core" r="16" /><text class="station__code" y="4">01</text><text class="station__name" y="45">Terminal</text>
+                </g>
+                <g class="station is-visited" data-id="EST02" data-x="220" data-y="105" data-nome="Museu" transform="translate(220 105)">
+                  <title>EST02 · Museu</title><circle class="station__halo" r="25" /><circle class="station__core" r="16" /><text class="station__code" y="4">02</text><text class="station__name" y="45">Museu</text>
+                </g>
+                <g class="station is-visited" data-id="EST03" data-x="220" data-y="430" data-nome="Universidade" transform="translate(220 430)">
+                  <title>EST03 · Universidade</title><circle class="station__halo" r="25" /><circle class="station__core" r="16" /><text class="station__code" y="4">03</text><text class="station__name" y="45">Universidade</text>
+                </g>
+                <g class="station is-visited is-path" data-id="EST04" data-x="390" data-y="205" data-nome="Centro" transform="translate(390 205)">
+                  <title>EST04 · Centro · parte da rota</title><circle class="station__halo" r="25" /><circle class="station__core" r="16" /><text class="station__code" y="4">04</text><text class="station__name" y="45">Centro</text>
+                </g>
+                <g class="station is-visited" data-id="EST05" data-x="390" data-y="400" data-nome="Mercado" transform="translate(390 400)">
+                  <title>EST05 · Mercado</title><circle class="station__halo" r="25" /><circle class="station__core" r="16" /><text class="station__code" y="4">05</text><text class="station__name" y="45">Mercado</text>
+                </g>
+                <g class="station is-visited" data-id="EST06" data-x="570" data-y="410" data-nome="Hospital" transform="translate(570 410)">
+                  <title>EST06 · Hospital</title><circle class="station__halo" r="25" /><circle class="station__core" r="16" /><text class="station__code" y="4">06</text><text class="station__name" y="45">Hospital</text>
+                </g>
+                <g class="station is-visited is-path" data-id="EST07" data-x="610" data-y="195" data-nome="Parque" transform="translate(610 195)">
+                  <title>EST07 · Parque · parte da rota</title><circle class="station__halo" r="25" /><circle class="station__core" r="16" /><text class="station__code" y="4">07</text><text class="station__name" y="45">Parque</text>
+                </g>
+                <g class="station is-visited" data-id="EST08" data-x="740" data-y="370" data-nome="Aeroporto" transform="translate(740 370)">
+                  <title>EST08 · Aeroporto</title><circle class="station__halo" r="25" /><circle class="station__core" r="16" /><text class="station__code" y="4">08</text><text class="station__name" y="45">Aeroporto</text>
+                </g>
+                <g class="station is-dest is-visited is-path" data-id="EST09" data-x="770" data-y="105" data-nome="Rodoviária" transform="translate(770 105)">
+                  <title>EST09 · Rodoviária · destino</title><circle class="station__halo" r="25" /><circle class="station__core" r="16" /><text class="station__code" y="4">09</text><text class="station__name" y="45">Rodoviária</text>
+                </g>
+              </g>
+            </svg>
+            <div class="map-compass" aria-hidden="true"><span>N</span><span class="map-compass__arrow">↑</span></div>
+          </div>
+
+          <div class="map-footnote">
+            <span class="map-footnote__icon" aria-hidden="true">i</span>
+            <p>Pesos da rede de demonstração; cada conexão pode ser percorrida nos dois sentidos.</p>
+            <span class="map-footnote__count">16 arestas</span>
+          </div>
+        </article>
+
+        <aside class="result-column" aria-label="Detalhes da busca">
+          <section class="result-card panel" aria-labelledby="result-title">
+            <div class="panel-heading panel-heading--compact">
+              <div class="panel-heading__title">
+                <span class="section-index">04</span>
+                <div><h2 id="result-title">Rota em destaque</h2><p id="route-status" role="status" aria-live="polite">Exemplo fixo · Dijkstra</p></div>
+              </div>
+              <span class="result-card__check" aria-hidden="true">✓</span>
+            </div>
+            <!-- JS: substitui o caminho e as métricas após receber o JSON. -->
+            <div class="route-summary" id="route-summary">
+              <div class="route-summary__endpoint"><span class="endpoint-dot endpoint-dot--origin"></span><span>EST01</span></div>
+              <div class="route-summary__path" id="route-path" aria-label="Caminho encontrado">EST01 <i>→</i> EST04 <i>→</i> EST07 <i>→</i> EST09</div>
+              <div class="route-summary__endpoint"><span class="endpoint-dot endpoint-dot--destination"></span><span>EST09</span></div>
+            </div>
+            <div class="metric-strip">
+              <div class="metric"><span class="metric__label">Custo total</span><strong id="route-cost">14 <small>u.</small></strong></div>
+              <span class="metric-strip__divider"></span>
+              <div class="metric"><span class="metric__label">Paradas</span><strong id="route-stops">4 <small>estações</small></strong></div>
+            </div>
+          </section>
+
+          <section class="visit-card panel" aria-labelledby="visit-title">
+            <div class="visit-card__heading">
+              <div><h2 id="visit-title">Ordem de visita</h2><p>Sequência explorada pelo algoritmo</p></div>
+              <span class="visit-count" id="visit-count">09 <span>nós</span></span>
+            </div>
+            <!-- JS: limpa esta lista e adiciona um item por nó de visitados, aplicando is-visited com intervalo. -->
+            <ol id="visit-order" class="visit-order" aria-live="polite" aria-label="Nós visitados em ordem">
+              <li class="visit-order__item is-complete" data-visit-id="EST01"><span class="visit-order__number">01</span><span class="visit-order__code">EST01</span><span class="visit-order__label">Terminal</span></li>
+              <li class="visit-order__item is-complete" data-visit-id="EST02"><span class="visit-order__number">02</span><span class="visit-order__code">EST02</span><span class="visit-order__label">Museu</span></li>
+              <li class="visit-order__item is-complete" data-visit-id="EST03"><span class="visit-order__number">03</span><span class="visit-order__code">EST03</span><span class="visit-order__label">Universidade</span></li>
+              <li class="visit-order__item is-complete is-route-node" data-visit-id="EST04"><span class="visit-order__number">04</span><span class="visit-order__code">EST04</span><span class="visit-order__label">Centro</span></li>
+              <li class="visit-order__item is-complete" data-visit-id="EST05"><span class="visit-order__number">05</span><span class="visit-order__code">EST05</span><span class="visit-order__label">Mercado</span></li>
+              <li class="visit-order__item is-complete" data-visit-id="EST06"><span class="visit-order__number">06</span><span class="visit-order__code">EST06</span><span class="visit-order__label">Hospital</span></li>
+              <li class="visit-order__item is-complete is-route-node" data-visit-id="EST07"><span class="visit-order__number">07</span><span class="visit-order__code">EST07</span><span class="visit-order__label">Parque</span></li>
+              <li class="visit-order__item is-complete" data-visit-id="EST08"><span class="visit-order__number">08</span><span class="visit-order__code">EST08</span><span class="visit-order__label">Aeroporto</span></li>
+              <li class="visit-order__item is-complete is-route-node" data-visit-id="EST09"><span class="visit-order__number">09</span><span class="visit-order__code">EST09</span><span class="visit-order__label">Rodoviária</span></li>
+            </ol>
+          </section>
+        </aside>
+      </section>
+
+      <section class="legend panel" aria-labelledby="legend-title">
+        <div class="legend__heading"><span class="section-index">05</span><div><h2 id="legend-title">Legenda</h2><p>Estados e cores da visualização</p></div></div>
+        <div class="legend__items">
+          <div class="legend-item"><span class="legend-node legend-node--origin"></span><span>Origem</span></div>
+          <div class="legend-item"><span class="legend-node legend-node--destination"></span><span>Destino</span></div>
+          <div class="legend-item"><span class="legend-node legend-node--visited"></span><span>Nó visitado</span></div>
+          <div class="legend-item"><span class="legend-node legend-node--metro"></span><span>Metrô</span></div>
+          <div class="legend-item"><span class="legend-node legend-node--carro"></span><span>Carro</span></div>
+          <span class="legend__separator" aria-hidden="true"></span>
+          <div class="legend-item"><span class="legend-route legend-route--bfs"></span><span>BFS</span></div>
+          <div class="legend-item"><span class="legend-route legend-route--dfs"></span><span>DFS</span></div>
+          <div class="legend-item"><span class="legend-route legend-route--dijkstra"></span><span>Dijkstra</span></div>
+          <div class="legend-item legend-item--weight"><span class="legend-weight">5</span><span>Peso da aresta</span></div>
+        </div>
+      </section>
+
+      <section class="comparison-panel panel" aria-labelledby="comparison-title">
+        <div class="comparison-panel__heading">
+          <div class="panel-heading__title">
+            <span class="section-index">06</span>
+            <div><h2 id="comparison-title">Comparativo dos algoritmos</h2><p>Exemplo fixo para a rota EST01 → EST09. Paradas contam origem e destino.</p></div>
+          </div>
+          <span class="comparison-note"><span class="comparison-note__dot"></span> Valores demonstrativos</span>
+        </div>
+        <div class="table-scroll">
+          <!-- JS: localiza a linha por data-algo-row e atualiza os campos data-field com o resultado da consulta. -->
+          <table class="comparison-table">
+            <thead><tr><th scope="col">Algoritmo</th><th scope="col">Caminho</th><th scope="col">Paradas</th><th scope="col">Custo total</th><th scope="col">Nós visitados</th></tr></thead>
+            <tbody>
+              <tr data-algo-row="bfs">
+                <th scope="row"><span class="table-algorithm table-algorithm--bfs"><span></span>BFS</span></th>
+                <td data-field="caminho" class="path-cell">EST01 <b>→</b> EST04 <b>→</b> EST07 <b>→</b> EST09</td>
+                <td data-field="paradas">4</td><td data-field="custo">14 <small>u.</small></td><td data-field="visitados">9</td>
+              </tr>
+              <tr data-algo-row="dfs">
+                <th scope="row"><span class="table-algorithm table-algorithm--dfs"><span></span>DFS</span></th>
+                <td data-field="caminho" class="path-cell">EST01 <b>→</b> EST03 <b>→</b> EST05 <b>→</b> EST06 <b>→</b> EST07 <b>→</b> EST09</td>
+                <td data-field="paradas">6</td><td data-field="custo">16 <small>u.</small></td><td data-field="visitados">7</td>
+              </tr>
+              <tr class="is-selected" data-algo-row="dijkstra">
+                <th scope="row"><span class="table-algorithm table-algorithm--dijkstra"><span></span>Dijkstra</span></th>
+                <td data-field="caminho" class="path-cell">EST01 <b>→</b> EST04 <b>→</b> EST07 <b>→</b> EST09</td>
+                <td data-field="paradas">4</td><td data-field="custo">14 <small>u.</small></td><td data-field="visitados">9</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="page-footer">
+        <span>MetroNet <span class="page-footer__separator">/</span> Visualização acadêmica de grafos</span>
+        <span>Grafo Python via Flask · alterações ativas enquanto o servidor estiver ligado</span>
+      </footer>
+    </main>
+    <script src="app.js" defer></script>
+  </body>
+</html>

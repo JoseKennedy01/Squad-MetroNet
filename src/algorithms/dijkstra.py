@@ -2,7 +2,7 @@
 
 from heapq import heappop, heappush
 
-def dijkstra(grafo, origem, destino):
+def dijkstra(grafo, origem, destino, *, retornar_visitados=False):
     """ Retorna (caminho, custo) ou None se não houver rota.
 
     Levanta ValueError se a origem ou o destino não estiver cadastrado.
@@ -22,6 +22,7 @@ def dijkstra(grafo, origem, destino):
     distancias = {origem: 0}
     predecessores = {origem: None}
     fila_prioridade = [(0, origem)]
+    ordem_visitados = []
 
     while fila_prioridade:
         custo_atual, atual = heappop(fila_prioridade)
@@ -29,6 +30,8 @@ def dijkstra(grafo, origem, destino):
         # Ignora entradas antigas quando uma rota melhor já foi encontrada.
         if custo_atual > distancias[atual]:
             continue
+
+        ordem_visitados.append(atual)
 
         if atual == destino:
             break
@@ -42,7 +45,7 @@ def dijkstra(grafo, origem, destino):
                 heappush(fila_prioridade, (novo_custo, vizinho))
 
     if destino not in distancias:
-        return None
+        return (None, None, ordem_visitados) if retornar_visitados else None
 
     # Reconstrói o caminho seguindo os predecessores do destino à origem.
     caminho = []
@@ -52,4 +55,6 @@ def dijkstra(grafo, origem, destino):
         atual = predecessores[atual]
     caminho.reverse()
 
+    if retornar_visitados:
+        return caminho, distancias[destino], ordem_visitados
     return caminho, distancias[destino]

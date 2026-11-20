@@ -1,4 +1,4 @@
-def busca_profundidade(grafo, origem, destino):
+def busca_profundidade(grafo, origem, destino, *, retornar_visitados=False):
     # Encontra um caminho entre dois pontos usando DFS. 
 
     # Valida se a origem e o destino estão cadastrados.
@@ -14,7 +14,7 @@ def busca_profundidade(grafo, origem, destino):
 
     # Se os pontos forem iguais, o caminho contém apenas esse ponto.
     if origem == destino:
-        return [origem]
+        return ([origem], [origem]) if retornar_visitados else [origem]
 
     # A pilha controla quais pontos ainda serão explorados.
     pilha = [origem]
@@ -24,9 +24,11 @@ def busca_profundidade(grafo, origem, destino):
 
     # Registra de onde cada ponto foi alcançado.
     predecessores = {origem: None}
+    ordem_visitados = []
 
     while pilha:
         atual = pilha.pop()
+        ordem_visitados.append(atual)
 
         # A busca termina quando o destino é encontrado.
         if atual == destino:
@@ -46,7 +48,7 @@ def busca_profundidade(grafo, origem, destino):
 
     # Se o destino não foi descoberto, não existe caminho.
     if destino not in predecessores:
-        return None
+        return (None, ordem_visitados) if retornar_visitados else None
 
     # Reconstrói o caminho do destino até a origem.
     caminho = []
@@ -58,4 +60,4 @@ def busca_profundidade(grafo, origem, destino):
 
     # Inverte para apresentar a sequência da origem ao destino.
     caminho.reverse()
-    return caminho
+    return (caminho, ordem_visitados) if retornar_visitados else caminho

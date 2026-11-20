@@ -1,4 +1,4 @@
-def busca_largura(grafo, origem, destino):
+def busca_largura(grafo, origem, destino, *, retornar_visitados=False):
     """
     Encontra um caminho com o menor número de conexões entre dois pontos.
 
@@ -30,10 +30,12 @@ def busca_largura(grafo, origem, destino):
 
     # Guardamos de onde chegamos a cada ponto para reconstruir o caminho.
     predecessores = {origem: None}
+    ordem_visitados = []
 
     while indice_fila < len(fila):
         atual = fila[indice_fila]
         indice_fila += 1
+        ordem_visitados.append(atual)
 
         # Como a fila é explorada por níveis, o destino já foi alcançado
         # pelo caminho com menos conexões.
@@ -50,7 +52,7 @@ def busca_largura(grafo, origem, destino):
 
     # Se o destino nunca foi descoberto, não existe caminho.
     if destino not in predecessores:
-        return None
+        return (None, ordem_visitados) if retornar_visitados else None
 
     # Voltamos do destino até a origem usando os predecessores.
     caminho = []
@@ -62,4 +64,4 @@ def busca_largura(grafo, origem, destino):
 
     # A reconstrução foi feita de trás para frente.
     caminho.reverse()
-    return caminho
+    return (caminho, ordem_visitados) if retornar_visitados else caminho

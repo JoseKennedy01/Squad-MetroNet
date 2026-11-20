@@ -17,15 +17,15 @@ Os códigos RF01–RF10 estão listados na tabela da seção A.5 do PDF (p. 6).
 | Código | Requisito da especificação | Relação com a implementação atual |
 | --- | --- | --- |
 | RF01 | Cadastrar um ponto de transporte | `Grafo.adicionar_ponto()` cadastra identificadores de pontos. |
-| RF02 | Cadastrar uma conexão entre dois pontos | `Grafo.adicionar_conexao()` registra uma conexão entre pontos já cadastrados. |
+| RF02 | Cadastrar uma conexão entre dois pontos | `Grafo.adicionar_conexao()` registra uma conexão; a API também permite removê-la em grafo não direcionado. |
 | RF03 | Associar peso à conexão | A conexão é armazenada como par `(vizinho, peso)` na lista de adjacência. |
-| RF04 | Consultar a rede | `obter_pontos()`, `obter_vizinhos()` e os métodos de contagem permitem consultar a estrutura. |
+| RF04 | Consultar a rede | `Grafo` e os endpoints `GET /estacoes` e `GET /conexoes` consultam a rede. |
 | RF05 | Executar BFS | Implementado em `src/algorithms/busca_largura.py`; encontra caminho com o menor número de conexões. |
 | RF06 | Executar DFS | Implementado em `src/algorithms/busca_profundidade.py`; encontra um caminho, sem garantir que seja o mais curto ou barato. |
 | RF07 | Executar Dijkstra | Implementado em `src/algorithms/dijkstra.py`; retorna caminho e custo mínimo para pesos não negativos. |
-| RF08 | Exibir o caminho encontrado | Os algoritmos retornam a sequência de pontos; a apresentação desse retorno em uma interface/CLI precisa ser confirmada no fluxo final do projeto. |
+| RF08 | Exibir o caminho encontrado | `GET /rota` chama os algoritmos Python e entrega o caminho à interface web. |
 | RF09 | Informar o custo total | Dijkstra retorna o custo total junto com o caminho. BFS e DFS não escolhem rotas pelo peso. |
-| RF10 | Informar quando não existir caminho | BFS e DFS retornam `None` quando os pontos existem, mas não há rota; Dijkstra segue o mesmo contrato. |
+| RF10 | Informar quando não existir caminho | `GET /rota` retorna `caminho: null` e a lista de nós visitados quando não há rota. |
 
 ### 3.1. Observação sobre a saída
 
@@ -71,6 +71,8 @@ Type hints, logging, configuração externa, integração contínua, melhorias d
 ## 8. Limites de escopo
 
 O PDF exclui React, Angular, Django, Flask, FastAPI, microsserviços, Docker, Kubernetes, cloud, bancos de dados complexos e machine learning avançado (p. 2 e p. 10). O foco deve continuar em modelagem matemática, estruturas de dados, algoritmos e análise de desempenho.
+
+**Atualização da demonstração:** a pedido da equipe, a cópia integrada agora inclui `app.py` com Flask para servir a interface e expor a API local do grafo. Essa camada é apenas uma forma de apresentar os algoritmos existentes; não substitui nem duplica a lógica do núcleo em Python.
 
 ## 9. Cronograma e referência de prazo
 
