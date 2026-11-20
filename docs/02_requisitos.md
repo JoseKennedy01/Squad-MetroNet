@@ -29,7 +29,7 @@ Os códigos RF01–RF10 estão listados na tabela da seção A.5 do PDF (p. 6).
 
 ### 3.1. Observação sobre a saída
 
-O PDF lista como saída rota, distância/custo, número de conexões e sequência de nós (seção A.3, p. 5). O contrato implementado para Dijkstra é `(caminho, custo_total)`. A BFS e a DFS retornam o caminho; a quantidade de conexões pode ser calculada como `len(caminho) - 1`. A especificação não define um formato único de retorno para todos os algoritmos.
+O PDF lista como saída rota, distância/custo, número de conexões e sequência de nós (seção A.3, p. 5). No núcleo Python, BFS e DFS retornam o caminho, e Dijkstra retorna caminho e custo. Na camada Flask, `GET /rota` informa `caminho`, `custo`, `conexoes` e `visitados`; `conexoes` é `len(caminho) - 1`, zero para origem igual ao destino e `null` quando não há rota. A interface exibe caminho, custo e conexões.
 
 ## 4. Requisitos não funcionais explícitos
 

@@ -159,7 +159,7 @@ h1 span { color: #93a9c6; }
 .endpoint-dot--destination { background: var(--color-destination); }
 .route-summary__path { padding-left: 1rem; color: #f0f5fc; font-size: .89rem; font-weight: 720; line-height: 1.55; letter-spacing: -.02em; }
 .route-summary__path i { padding: 0 .15rem; color: var(--route-color); font-style: normal; }
-.metric-strip { display: grid; grid-template-columns: 1fr 1px 1fr; align-items: center; gap: 1rem; padding: 1rem .25rem .1rem; }
+.metric-strip { display: grid; grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr) 1px minmax(0, 1fr); align-items: center; gap: .75rem; padding: 1rem .25rem .1rem; }
 .metric-strip__divider { width: 1px; height: 34px; background: var(--color-border-strong); }
 .metric { display: flex; flex-direction: column; gap: .28rem; }
 .metric__label { color: var(--color-text-muted); font-size: .67rem; }

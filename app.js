@@ -287,7 +287,7 @@
     clearComparison("Aguardando nova busca");
     visitOrder.replaceChildren();
     setCount(0);
-    ["#route-path", "#route-cost", "#route-stops"].forEach((selector) => {
+    ["#route-path", "#route-cost", "#route-connections", "#route-stops"].forEach((selector) => {
       const element = document.querySelector(selector);
       if (element) element.textContent = "—";
     });
@@ -308,7 +308,7 @@
     const visited = Array.isArray(result.visitados) ? result.visitados : [];
     row.classList.toggle("is-selected", algo === selectedAlgo);
     row.querySelector('[data-field="caminho"]').textContent = path.length ? path.join(" → ") : "Sem rota";
-    row.querySelector('[data-field="paradas"]').textContent = path.length ? String(path.length) : "—";
+    row.querySelector('[data-field="conexoes"]').textContent = result.conexoes == null ? "—" : String(result.conexoes);
     row.querySelector('[data-field="custo"]').textContent = formatCost(result.custo);
     row.querySelector('[data-field="visitados"]').textContent = String(visited.length);
   }
@@ -353,12 +353,13 @@
     });
   }
 
-  function updateRouteSummary(origin, destination, path, cost) {
+  function updateRouteSummary(origin, destination, path, cost, connections) {
     const ends = document.querySelectorAll("#route-summary .route-summary__endpoint span:last-child");
     if (ends[0]) ends[0].textContent = origin;
     if (ends[1]) ends[1].textContent = destination;
     document.querySelector("#route-path").textContent = path.length ? path.join(" → ") : "Sem rota encontrada";
     document.querySelector("#route-cost").textContent = formatCost(cost);
+    document.querySelector("#route-connections").textContent = connections == null ? "—" : connections + " conexões";
     document.querySelector("#route-stops").textContent = path.length ? `${path.length} estações` : "—";
     const description = document.querySelector("#svg-description");
     if (description) description.textContent = path.length
@@ -397,7 +398,7 @@
       const result = results[algo];
       const path = Array.isArray(result.caminho) ? result.caminho : [];
       const visited = Array.isArray(result.visitados) ? result.visitados : [];
-      updateRouteSummary(origin, destination, path, result.custo);
+      updateRouteSummary(origin, destination, path, result.custo, result.conexoes);
       visitOrder.replaceChildren();
       setCount(visited.length);
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

@@ -149,3 +149,17 @@ A análise de complexidade e o profiling devem ser documentados com base na impl
 Os testes automatizados permitem verificar o comportamento esperado dos módulos e identificar regressões durante o desenvolvimento.
 
 A suíte completa deve ser executada novamente após alterações relevantes no grafo, nos algoritmos ou nos testes. Os resultados registrados devem corresponder a execuções reais e identificáveis.
+## 9. Revisão integrada da interface e API — 20/11/2026
+
+Na branch `nicolas-experimentos`, a suíte completa foi executada após incluir testes dos endpoints Flask:
+
+```text
+python -B -m pytest -q -p no:cacheprovider
+61 passed in 0.36s (cenário anterior; seção 10 registra a validação final).
+```
+
+Os novos testes cobrem a página e seus ativos, rotas pelos três algoritmos, quantidade de conexões, origem igual ao destino, destino inacessível, corpo JSON em formato inválido, cadastro e remoção de estação/conexão e entradas inválidas. `node --check app.js` e `git diff --check` também terminaram sem apontamentos. A interface foi verificada por testes HTTP do Flask; não foi feita validação visual manual no navegador nesta rodada.
+
+## 10. Validação final com a rede do PDF — 20/11/2026
+
+Depois de alinhar a rede padrão ao PDF, foram executados os testes com `python -B -m pytest -q -p no:cacheprovider`: **63 passaram, nenhum falhou ou foi ignorado (0,52 s)**. Os testes incluem a API Flask e verificam a rota sem caminho `EST01`–`EST03`. O servidor também foi iniciado com `python app.py`; página e ativos responderam HTTP 200 e as consultas HTTP reais confirmaram BFS, DFS, Dijkstra e ausência de rota. `node --check app.js` e `git diff --check` passaram. A inspeção visual em navegador não foi executada.

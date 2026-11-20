@@ -32,6 +32,7 @@ O núcleo implementado permite:
 - Executar **DFS**;
 - Executar **Dijkstra**;
 - Retornar a sequência do caminho encontrado;
+- Informar a quantidade de conexões da rota;
 - Informar o custo total da rota;
 - Identificar quando não existe caminho entre dois pontos.
 
@@ -39,66 +40,36 @@ O núcleo implementado permite:
 
 ## 🧮 Algoritmos
 
-O núcleo do projeto utiliza algoritmos e estruturas de dados relacionados a grafos:
-
-- **BFS (Breadth-First Search)** — busca em largura;
-- **DFS (Depth-First Search)** — busca em profundidade;
-- **Dijkstra** — busca pelo caminho de menor custo;
-- **Heap** — utilizada como fila de prioridade.
-
-Também serão analisadas as complexidades dos algoritmos e seu comportamento conforme o tamanho da rede aumenta.
+O núcleo implementa BFS, DFS e Dijkstra com heap como fila de prioridade. A análise teórica está em `docs/06_complexidade.md`; os experimentos disponíveis estão documentados em `docs/08_resultados.md` e organizados na pasta `experimentos/`.
 
 ---
 
 ## 🏗️ Estrutura do projeto
 
-> A árvore abaixo é a estrutura de referência do projeto; os arquivos presentes devem ser conferidos na raiz do repositório.
-
 ```text
-urban-tech-metronet/
-│
-├── README.md
-├── LICENSE
+Squad-MetroNet/
+├── app.py
+├── app.js
+├── index.html
+├── style.css
 ├── requirements.txt
-├── .gitignore
-│
-├── docs/
-│   ├── 01_visao_produto.md
-│   ├── 02_requisitos.md
-│   ├── 03_modelagem_matematica.md
-│   ├── 04_arquitetura.md
-│   ├── 05_algoritmos.md
-│   ├── 06_complexidade.md
-│   ├── 07_testes.md
-│   └── 08_resultados.md
-│
 ├── src/
-│   ├── __init__.py
-│   ├── models/
-│   ├── data/
-│   ├── algorithms/
-│   ├── services/
-│   └── utils/
-│
+│   ├── models/grafo.py
+│   └── algorithms/
 ├── tests/
-│   ├── test_models.py
-│   ├── test_algorithms.py
-│   ├── test_services.py
-│   └── test_edge_cases.py
-│
-├── data/
-│   ├── raw/
-│   └── processed/
-│
-├── notebooks/
-│   └── exploration.ipynb
-│
-├── reports/
-│   ├── complexity/
-│   ├── profiling/
-│   └── figures/
-│
-└── app.py
+│   ├── test_grafo.py
+│   ├── test_busca_largura.py
+│   ├── test_busca_profundidade.py
+│   ├── test_dijkstra.py
+│   └── test_api.py
+├── data/raw/rede_demo.csv
+├── experimentos/
+│   ├── gerador.py
+│   ├── medir.py
+│   ├── grafico.py
+│   └── resultado_desempenho.png
+└── docs/
+    └── 09_demonstracao.md
 ```
 
 ---
@@ -148,16 +119,7 @@ Entre os cenários previstos estão:
 
 ## 📊 Análise de desempenho
 
-O projeto documenta a complexidade teórica dos algoritmos. A análise experimental de eficiência ainda precisa ser realizada.
-
-Serão considerados:
-
-- Complexidade teórica;
-- Tempo de execução;
-- Consumo de memória;
-- Profiling;
-- Gráficos de desempenho;
-- Comparação entre comportamento teórico e experimental.
+O checkout inclui scripts de geração, medição e criação de gráficos em `experimentos/`, além de `experimentos/resultado_desempenho.png`. Consulte `docs/08_resultados.md` para entender o alcance e as limitações dos dados; não interprete tempos da suíte de testes como benchmarks dos algoritmos.
 
 ---
 
@@ -218,7 +180,7 @@ O MetroNet inclui uma interface demonstrativa servida pelo Flask. A rede começa
 ```bash
 git clone <URL_DO_REPOSITORIO>
 
-cd urban-tech-metronet
+cd Squad-MetroNet
 
 python -m venv venv
 ```
@@ -237,7 +199,7 @@ pip install -r requirements.txt
 
 ### Interface web
 
-Na raiz do projeto, inicie o servidor:
+Na raiz do projeto, com o ambiente virtual ativado e as dependências instaladas, inicie o servidor. Ele atende a interface e a API no mesmo processo; mantenha essa janela aberta durante a demonstração:
 
 ```bash
 python app.py
@@ -272,22 +234,19 @@ python -m pytest -v
 
 ## 📌 Status do projeto
 
-**Núcleo de grafo e algoritmos implementado; validação final e análise experimental pendentes.**
+Na branch `nicolas-experimentos`, a suíte integrada passou com 63 testes em 20/11/2026. A interface Flask e os artefatos de experimento estão presentes. Revisão visual no navegador, integração segura das branches, apresentação da equipe e publicação da release `v1.0.0` permanecem pendentes.
 
 - [x] Modelagem do grafo
-- [x] Implementação das estruturas de dados
-- [x] Implementação de BFS
-- [x] Implementação de DFS
-- [x] Implementação de Dijkstra
-- [x] Validações e tratamento de exceções
-- [x] Testes automatizados criados e executados na cópia integrada de revisão
-- [x] Análise de complexidade teórica
-- [ ] Profiling
-- [ ] Gráficos de desempenho
-- [x] Documentação do produto, requisitos, modelagem, arquitetura, algoritmos, complexidade, testes e resultados
+- [x] Implementação de BFS, DFS e Dijkstra
+- [x] Interface Flask e API local
+- [x] Testes automatizados do núcleo e da API
+- [x] Análise de complexidade e artefatos experimentais presentes
+- [ ] Revisão visual da interface e ensaio final
+- [ ] Integração das branches após decisão da equipe
+- [ ] Apresentação e defesa individual
 - [ ] Release `v1.0.0`
 
-Na cópia integrada formada pelos ZIPs recebidos, a última execução apresentou **50 testes aprovados em 0,18 segundo**. Esse snapshot contém 12 testes da DFS; o integrante responsável informou depois uma versão com 13. A suíte final precisa ser executada novamente com a DFS atualizada antes do commit.
+Execução de revisão em 20/11/2026: `python -B -m pytest -q -p no:cacheprovider` — **63 testes aprovados em 0,52 segundo**. `node --check app.js` e `git diff --check` também passaram. O tempo informado corresponde à suíte, não ao desempenho isolado dos algoritmos.
 
 ---
 

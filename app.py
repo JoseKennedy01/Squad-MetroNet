@@ -27,21 +27,14 @@ ESTACOES_DEMO = [
 ]
 
 CONEXOES_DEMO = [
-    ("EST01", "EST02", 3),
-    ("EST01", "EST03", 4),
     ("EST01", "EST04", 5),
-    ("EST02", "EST04", 4),
-    ("EST03", "EST05", 2),
-    ("EST03", "EST04", 6),
-    ("EST04", "EST05", 3),
-    ("EST04", "EST06", 7),
     ("EST04", "EST07", 4),
-    ("EST05", "EST06", 2),
-    ("EST05", "EST08", 8),
-    ("EST06", "EST07", 3),
-    ("EST06", "EST08", 2),
-    ("EST07", "EST08", 2),
     ("EST07", "EST09", 5),
+    ("EST01", "EST02", 10),
+    ("EST02", "EST09", 10),
+    ("EST04", "EST05", 3),
+    ("EST05", "EST06", 2),
+    ("EST06", "EST08", 2),
     ("EST08", "EST09", 6),
 ]
 
@@ -103,7 +96,9 @@ def listar_estacoes():
 @app.post("/estacoes")
 def adicionar_estacao():
     global grafo
-    dados = request.get_json(silent=True) or {}
+    dados = request.get_json(silent=True)
+    if not isinstance(dados, dict):
+        return erro('O corpo da requisição deve ser um objeto JSON.')
     nome = dados.get("nome")
     tipo = str(dados.get("tipo", "metro")).strip().lower()
     if not isinstance(nome, str) or not nome.strip():
@@ -158,7 +153,9 @@ def listar_conexoes():
 
 @app.post("/conexoes")
 def adicionar_conexao():
-    dados = request.get_json(silent=True) or {}
+    dados = request.get_json(silent=True)
+    if not isinstance(dados, dict):
+        return erro('O corpo da requisição deve ser um objeto JSON.')
     origem = dados.get("origem")
     destino = dados.get("destino")
     peso = dados.get("peso")
@@ -210,6 +207,7 @@ def consultar_rota():
         "destino": destino.strip(),
         "caminho": caminho,
         "custo": custo,
+        "conexoes": len(caminho) - 1 if caminho is not None else None,
         "visitados": visitados,
     })
 
