@@ -12,6 +12,9 @@ class Grafo:
     """
 
     def __init__(self, direcionado=False):
+        if not isinstance(direcionado, bool):
+            raise ValueError("O parâmetro 'direcionado' deve ser True ou False.")
+
         # Cria um grafo vazio.
         self.direcionado = direcionado
         self.pontos = set()

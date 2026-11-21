@@ -198,8 +198,10 @@ do projeto:
 - Dijkstra: encontra um caminho de menor custo em um grafo com pesos
   não negativos.
 
-Esses algoritmos serão implementados em uma etapa posterior,
-utilizando a estrutura do grafo.
+Os três algoritmos estão implementados em módulos separados e utilizam
+as consultas públicas da classe `Grafo`. A BFS minimiza o número de
+conexões, a DFS encontra um caminho válido sem garantir que seja mínimo,
+e Dijkstra minimiza o custo acumulado para pesos não negativos.
 
 ## 11. Considerações finais
 

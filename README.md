@@ -234,19 +234,19 @@ python -m pytest -v
 
 ## 📌 Status do projeto
 
-Na branch `nicolas-experimentos`, a suíte integrada passou com 63 testes em 20/11/2026. A interface Flask e os artefatos de experimento estão presentes. Revisão visual no navegador, integração segura das branches, apresentação da equipe e publicação da release `v1.0.0` permanecem pendentes.
+Na `main`, a integração das branches está pronta para confirmação no GitHub Desktop. A validação integrada passou com 144 testes. A apresentação da equipe e eventual publicação da release `v1.0.0` são etapas posteriores.
 
 - [x] Modelagem do grafo
 - [x] Implementação de BFS, DFS e Dijkstra
 - [x] Interface Flask e API local
 - [x] Testes automatizados do núcleo e da API
 - [x] Análise de complexidade e artefatos experimentais presentes
-- [ ] Revisão visual da interface e ensaio final
-- [ ] Integração das branches após decisão da equipe
+- [x] Revisão visual da interface e ensaio final
+- [x] Integração das branches após decisão da equipe
 - [ ] Apresentação e defesa individual
-- [ ] Release `v1.0.0`
+- [ ] Release `v1.0.0` (aguarda revisão e autorização da equipe)
 
-Execução de revisão em 20/11/2026: `python -B -m pytest -q -p no:cacheprovider` — **63 testes aprovados em 0,52 segundo**. `node --check app.js` e `git diff --check` também passaram. O tempo informado corresponde à suíte, não ao desempenho isolado dos algoritmos.
+Execução de revisão integrada em 21/11/2026: `python -m pytest -q -p no:cacheprovider` — **144 testes aprovados**. `node --check app.js` e `git diff --cached --check` passaram. O tempo informado corresponde à suíte, não ao desempenho isolado dos algoritmos.
 
 ---
 
@@ -255,3 +255,80 @@ Execução de revisão em 20/11/2026: `python -B -m pytest -q -p no:cacheprovide
 Este projeto foi desenvolvido para fins acadêmicos no contexto da disciplina de **Matemática Computacional**.
 
 A licença MIT está especificada no arquivo `LICENSE`.
+
+---
+
+## Atualização complementar — resultados reunidos da equipe
+
+Esta seção complementa o registro anterior sem substituir seu conteúdo. Os resultados abaixo vêm de execuções e snapshots diferentes; por isso, não devem ser somados nem tratados como uma única execução.
+
+### Testes automatizados
+
+Na cópia do repositório conferida em 26/10/2026, a suíte completa apresentou **67 testes aprovados em 0,62 segundo**. O pytest exibiu um aviso por não conseguir gravar o cache em `.pytest_cache`, mas não houve falha de teste.
+
+A suíte coletada nessa cópia se distribui assim:
+
+| Área | Casos coletados |
+|---|---:|
+| Aplicação de terminal | 4 |
+| BFS | 10 |
+| DFS | 13 |
+| Dijkstra | 12 |
+| Grafo e validações | 16 |
+| Serviços de roteamento | 12 |
+| **Total** | **67** |
+
+O integrante responsável pela DFS informou **13 testes específicos da DFS aprovados**. O integrante responsável pelo Dijkstra informou **12 testes específicos do Dijkstra aprovados em 0,13 segundo**. Esses testes já estão incluídos na contagem da suíte integrada de 67; não devem ser somados novamente.
+
+Também foi informado um resultado de **77 testes aprovados em 0,24 segundo** para uma versão mais recente. Esse número não foi reproduzido na cópia conferida nesta data, que coletou 67 casos. Ele fica registrado como resultado de outro snapshot e precisa ser associado à versão correspondente antes de ser apresentado como resultado da suíte atual.
+
+### Experimentos de desempenho informados pela equipe
+
+A equipe informou a geração de redes determinísticas e conectadas com estas quantidades:
+
+| Pontos | Conexões |
+|---:|---:|
+| 100 | 197 |
+| 500 | 997 |
+| 1.000 | 1.997 |
+
+Também foram informadas 15 medições de tempo por algoritmo e tamanho de rede, após aquecimento, resumidas pela mediana:
+
+| Pontos | BFS (s) | DFS (s) | Dijkstra (s) |
+|---:|---:|---:|---:|
+| 100 | 0,00005030 | 0,00004520 | 0,00007800 |
+| 500 | 0,00032760 | 0,00026620 | 0,00053810 |
+| 1.000 | 0,00066620 | 0,00044560 | 0,00084930 |
+
+Nessas redes e condições relatadas, a DFS apresentou a menor mediana e Dijkstra a maior. Essa observação se limita aos casos medidos e não garante a mesma ordem para outras redes. A equipe também informou a medição separada do pico de memória com `tracemalloc`, que acompanha alocações rastreadas pelo Python e não equivale ao uso total de memória do processo.
+
+**Estado dos artefatos nesta cópia:** não foram encontrados os módulos e resultados citados pela equipe — `src/data/gerar_rede_sintetica.py`, `reports/profiling/benchmark_algoritmos.py`, `reports/profiling/perfil_algoritmos.py`, `reports/profiling/resultados_benchmark.csv`, os gráficos ou os arquivos `.prof`. Portanto, os comandos para reproduzir os experimentos e os valores de memória ainda não estão confirmados aqui. A equipe informou que o profiling usa `cProfile`/`pstats` e gera perfis para três algoritmos em três tamanhos; os tempos do perfilador incluem sobrecarga e não são diretamente comparáveis às medianas do benchmark.
+
+
+---
+
+## Atualização de desenvolvimento — 02/11/2026
+
+Esta seção complementa os registros anteriores sem substituir o texto já existente.
+
+- Revisamos o modelo do grafo, BFS, DFS, Dijkstra e a interface de terminal; as implementações foram preservadas.
+- Acrescentamos cobertura para ciclo na BFS, caminho não mínimo na DFS, ciclo de peso zero em Dijkstra e integração da interface com DFS/Dijkstra, pesos inválidos, algoritmo inválido e ponto inexistente.
+- A execução integrada mais recente registrou **101 testes aprovados em 0,26 segundo**: 16 de grafo, 26 dos módulos de dados, 11 de BFS, 14 de DFS, 13 de Dijkstra, 12 de serviços e 9 da interface. Esse tempo mede a suíte, não o desempenho comparativo dos algoritmos.
+- Confirmamos o início do menu por `python app.py` e o encerramento ao selecionar `0`. A suíte completa é executada com `python -m pytest -v`.
+- Nesta cópia estão presentes `src/data/carregar_rede.py`, `src/data/gerar_rede_sintetica.py` e scripts e artefatos em `reports/profiling/`. Isso atualiza a observação anterior, que refletia um snapshot sem esses arquivos. Os benchmarks e o profiling não foram executados nesta etapa para preservar os artefatos da pessoa responsável por essa frente.
+- A documentação de arquitetura, algoritmos e testes foi alinhada aos módulos atuais. O guia de execução está em `docs/07_execucao.md`.
+
+### Reexecução da suíte — 02/11/2026
+
+A suíte foi executada novamente após a revisão documental: **101 testes aprovados em 0,55 segundo**, sem falhas, com `python -m pytest -q -p no:cacheprovider`. Este tempo substitui apenas o tempo registrado na atualização de desenvolvimento acima; o total de testes permaneceu 101.
+
+---
+
+## Atualização após revisão do fluxo de entrada — 02/11/2026
+
+Esta nota acrescenta o resultado posterior sem reescrever os registros anteriores.
+
+- A seleção de algoritmo agora trata entradas Unicode que não podem ser convertidas para inteiro como opção inválida, em vez de encerrar com exceção. O novo cenário está em `tests/test_app.py`.
+- Após essa correção, a suíte completa apresentou **102 testes aprovados em 0,31 segundo**, sem falhas, com `python -m pytest -q -p no:cacheprovider`.
+- A suíte atual inclui 16 testes do grafo, 26 dos módulos de dados, 11 de BFS, 14 de DFS, 13 de Dijkstra, 12 do serviço de roteamento e 10 da interface. A soma corresponde aos 102 testes dessa execução; resultados de outras versões não devem ser somados a ela.
+- **Ponto documental a coordenar:** `docs/02_requisitos.md` ainda diz que a apresentação de RF08 pela interface precisa ser confirmada. O `app.py` atual exibe o caminho. O documento de requisitos não foi alterado nesta etapa; alinhar essa frase com a pessoa responsável antes de declarar a documentação inteiramente consistente.

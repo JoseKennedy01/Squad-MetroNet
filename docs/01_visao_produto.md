@@ -83,3 +83,10 @@ O projeto será considerado satisfatório quando:
 - O custo total for calculado corretamente pelo algoritmo de roteamento correspondente.
 - A documentação explicar a modelagem, a arquitetura, os algoritmos, os testes e a complexidade.
 - A análise de desempenho utilizar resultados obtidos experimentalmente, sem inventar medições.
+
+
+## 10. Estado atual da implementação
+
+O MetroNet possui o modelo de grafo ponderado, os algoritmos BFS, DFS e Dijkstra, o serviço de roteamento e uma interface de terminal em `app.py`. Também há módulos separados para carregar redes a partir de CSV e gerar redes sintéticas determinísticas em `src/data/`.
+
+O núcleo e a interface têm testes automatizados. A suíte integrada mais recente registrada nesta cópia aprovou 102 testes. A análise experimental é tratada separadamente e seus artefatos estão em `reports/profiling/`.

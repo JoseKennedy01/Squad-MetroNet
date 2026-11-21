@@ -1,0 +1,7 @@
+origem,destino,peso
+Estacao_A,Estacao_B,2.5
+Estacao_A,Estacao_C,4.0
+Estacao_B,Estacao_C,1.0
+Estacao_B,Estacao_D,3.5
+Estacao_C,Estacao_D,1.5
+Estacao_D,Estacao_E,2.0

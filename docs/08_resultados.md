@@ -1,38 +1,47 @@
 # 08 — Resultados do MetroNet
 
-## 1. Objetivo e critério de registro
+## 1. Objetivo
 
-Este documento registra resultados de execução relatados para versões identificáveis do projeto e separa esses resultados de medições de desempenho. Um resultado de teste não é uma medição de Big-O, tempo de rota ou uso de memória.
+Este documento registra os resultados dos testes funcionais, da análise experimental de desempenho e do profiling dos algoritmos BFS, DFS e Dijkstra.
 
-Os dois ZIPs recebidos em 14/10/2026 representam snapshots diferentes. Um contém a versão mais recente da DFS e seus documentos, mas não inclui Dijkstra. O outro contém Dijkstra e seus testes, mas não inclui a DFS mais recente. Portanto, os resultados abaixo não devem ser somados nem apresentados como se viessem de uma única suíte integrada.
+Os resultados devem ser interpretados considerando a versão integrada do projeto, os tamanhos das redes utilizadas e as limitações das ferramentas de medição.
 
-## 2. Testes funcionais informados
+## 2. Validação funcional
 
-Os resultados foram informados pelos integrantes do projeto; os tempos indicados são os tempos apresentados pelo `pytest` naquela execução.
+A suíte automatizada utiliza `pytest` para verificar o comportamento do grafo, dos algoritmos e dos módulos de dados.
 
-| Snapshot/escopo relatado | Comando | Resultado informado | Observação |
-| --- | --- | --- | --- |
-| Dijkstra | `python -m pytest -v tests/test_dijkstra.py` | 12 aprovados em 0,13 s | Execução específica da versão de testes de Dijkstra reforçada com empate, direção e custo decimal. |
-| Dijkstra, BFS e grafo | `python -m pytest -v` | 38 aprovados em 0,22 s | Execução informada antes da inclusão do teste adicional mais recente da DFS. |
-| DFS mais recente, BFS e grafo | `python -m pytest -v tests/test_busca_profundidade.py` | 13 testes da DFS aprovados | Resultado informado pelo integrante responsável pela DFS. |
-| DFS mais recente, BFS e grafo | `python -m pytest -v` | 39 aprovados, sem falhas | Execução informada para o snapshot que contém a DFS atual, mas não contém o Dijkstra do outro ZIP. |
-| Arquivos dos dois ZIPs recebidos integrados nesta cópia de revisão | `python -m pytest -v` | 50 aprovados em 0,25 s | Execução realizada nesta revisão. O ZIP da DFS contém 12 casos de teste da DFS, embora a atualização mais recente informe 13. |
+Na execução integrada desta revisão, em 07/11/2026, o comando `python -m pytest -q -p no:cacheprovider` apresentou **132 testes aprovados em 0,33 segundo, sem falhas**.
 
-Essas execuções demonstram que os cenários testados passaram nos respectivos snapshots. A suíte de 50 testes foi executada após combinar os arquivos de Dijkstra de um ZIP com os arquivos de DFS do outro. Ela não contém o décimo terceiro teste mencionado na atualização mais recente do integrante responsável pela DFS; portanto, a suíte final com a DFS mais atual ainda precisa ser executada.
+Os cenários cobertos incluem:
 
-## 3. Cobertura funcional observada
+- Cadastro e validação de pontos e conexões.
+- Busca em largura (BFS) e busca em profundidade (DFS).
+- Menor caminho por custo com Dijkstra.
+- Origem igual ao destino.
+- Caminhos diretos e indiretos.
+- Destinos inacessíveis.
+- Pontos inexistentes e pesos inválidos.
+- Pesos zero, decimais e empates de custo.
+- Carregamento de redes por CSV.
+- Rejeição de arquivos inválidos e conexões duplicadas.
+- Geração determinística de redes sintéticas.
+- Validação dos caminhos e resultados retornados pelos algoritmos.
 
-Os testes disponibilizados cobrem a estrutura e as validações do grafo, casos de BFS e DFS e, no snapshot de Dijkstra, rotas diretas/indiretas, menor custo, empate, origem igual ao destino, destino inacessível, pontos inexistentes, direção, peso zero e soma decimal aproximada.
+A aprovação dos testes confirma o comportamento dos cenários automatizados implementados, mas não garante a ausência de todos os defeitos possíveis.
 
-A aprovação da suíte cobre os casos implementados, mas não prova ausência de todos os defeitos possíveis. A revisão cruzada e a execução final da suíte integrada continuam necessárias.
+## 3. Metodologia experimental
 
-## 4. Análise de desempenho ainda pendente
+Para comparar os algoritmos, foram utilizadas redes sintéticas geradas de forma determinística pelo módulo `src/data/gerar_rede_sintetica.py`.
 
-Não há neste registro medições controladas de tempo ou memória dos algoritmos, gráficos de desempenho ou perfil produzido por `cProfile`. Essas atividades são entregáveis explícitos no PDF (p. 4–5, p. 8 e p. 10) e devem ser executadas antes de declarar concluída a análise experimental.
+| Pontos (V) | Conexões (E) |
+|---:|---:|
+| 100 | 197 |
+| 500 | 997 |
+| 1.000 | 1.997 |
 
-Os tempos de 0,13 s, 0,22 s e os tempos apresentados para outras execuções do `pytest` são tempos da suíte de testes. Eles variam por ambiente e não devem ser usados como evidência de que um algoritmo é mais rápido que outro.
+Os algoritmos foram executados nas mesmas redes, utilizando `EST001` como origem e o último ponto da rede como destino.
 
-## 5. Pendências para a versão final
+O script `reports/profiling/benchmark_algoritmos.py` realizou uma execução inicial de aquecimento e, em seguida, 15 medições de tempo para cada algoritmo e tamanho de rede. A mediana dos tempos foi utilizada como resultado representativo.
 
 - Obter ou confirmar a versão da DFS que contém os 13 testes informados e integrar os arquivos atuais de BFS, DFS, Dijkstra e grafo sem sobrescrever o trabalho de nenhum integrante.
 - Fazer revisão cruzada do código e da documentação.

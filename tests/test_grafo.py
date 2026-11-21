@@ -12,6 +12,12 @@ def test_grafo_nasce_vazio():
     assert grafo.obter_pontos() == []
 
 
+@pytest.mark.parametrize("direcionado", [None, 0, 1, "False"])
+def test_direcionado_deve_ser_booleano(direcionado):
+    with pytest.raises(ValueError, match="deve ser True ou False"):
+        Grafo(direcionado=direcionado)
+
+
 def test_adicionar_ponto_guarda_apenas_uma_vez():
     # Um identificador repetido não cria outro ponto. 
     grafo = Grafo()
@@ -111,6 +117,11 @@ def test_nao_permite_pesos_invalidos():
         with pytest.raises(ValueError):
             grafo.adicionar_conexao("EST01", "EST02", peso)
 
+    # Uma tentativa inválida não deve gravar nenhuma conexão.
+    assert grafo.quantidade_conexoes() == 0
+    assert grafo.obter_vizinhos("EST01") == []
+    assert grafo.obter_vizinhos("EST02") == []
+
 def test_permite_peso_zero_e_decimal():
     # Pesos zero e decimais são válidos. 
     grafo = Grafo()
@@ -197,3 +208,19 @@ def test_copia_da_lista_de_vizinhos_nao_altera_o_grafo():
 
     # A conexão original continua armazenada no grafo.
     assert grafo.obter_vizinhos("EST01") == [("EST02", 5)]
+
+
+def test_conexao_com_extremo_inexistente_nao_altera_grafo():
+    grafo = Grafo()
+    grafo.adicionar_ponto("EST01")
+    grafo.adicionar_ponto("EST02")
+
+    with pytest.raises(ValueError):
+        grafo.adicionar_conexao("EST01", "EST99", 5)
+
+    with pytest.raises(ValueError):
+        grafo.adicionar_conexao("EST99", "EST02", 5)
+
+    assert grafo.quantidade_conexoes() == 0
+    assert grafo.obter_vizinhos("EST01") == []
+    assert grafo.obter_vizinhos("EST02") == []
