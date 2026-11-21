@@ -63,6 +63,56 @@ class Grafo:
         if not self.direcionado:
             self.adjacencias[destino].append((origem, peso))
 
+    def remover_conexao(self, origem, destino):
+        """Remove uma conexão; em grafo não direcionado, remove os dois sentidos."""
+        origem = self._validar_identificador(origem)
+        destino = self._validar_identificador(destino)
+
+        if origem not in self.pontos or destino not in self.pontos:
+            raise ValueError("Origem e destino precisam estar cadastrados na rede.")
+        if not self._conexao_ja_existe(origem, destino):
+            raise ValueError("A conexão informada não está cadastrada.")
+
+        self.adjacencias[origem] = [
+            (vizinho, peso) for vizinho, peso in self.adjacencias[origem]
+            if vizinho != destino
+        ]
+        if not self.direcionado:
+            self.adjacencias[destino] = [
+                (vizinho, peso) for vizinho, peso in self.adjacencias[destino]
+                if vizinho != origem
+            ]
+        return True
+
+    def remover_ponto(self, identificador):
+        """Remove um ponto e todas as conexões que chegam ou saem dele."""
+        identificador = self._validar_identificador(identificador)
+        if identificador not in self.pontos:
+            raise ValueError("O ponto informado não está cadastrado na rede.")
+
+        for ponto, vizinhos in self.adjacencias.items():
+            if ponto != identificador:
+                self.adjacencias[ponto] = [
+                    (vizinho, peso) for vizinho, peso in vizinhos
+                    if vizinho != identificador
+                ]
+        del self.adjacencias[identificador]
+        self.pontos.remove(identificador)
+        return True
+
+    def obter_conexoes(self):
+        """Retorna cada conexão cadastrada uma vez, como (origem, destino, peso)."""
+        conexoes = []
+        vistas = set()
+        for origem, vizinhos in self.adjacencias.items():
+            for destino, peso in vizinhos:
+                chave = (origem, destino) if self.direcionado else frozenset((origem, destino))
+                if chave in vistas:
+                    continue
+                vistas.add(chave)
+                conexoes.append((origem, destino, peso))
+        return conexoes
+
     def possui_ponto(self, identificador):
         # Informa se um ponto pertence à rede. 
         identificador = self._validar_identificador(identificador)

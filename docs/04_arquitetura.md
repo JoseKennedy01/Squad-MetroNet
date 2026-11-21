@@ -34,6 +34,10 @@ A estrutura relevante do projeto é organizada da seguinte forma:
 
 ```text
 Squad-MetroNet/
+├── app.py
+├── index.html
+├── style.css
+├── app.js
 ├── src/
 │   ├── models/
 │   │   └── grafo.py
@@ -100,9 +104,9 @@ A DFS explora um caminho em profundidade antes de retornar para explorar alterna
 
 ### Dijkstra
 
-Arquivo previsto: `src/algorithms/dijkstra.py`.
+Arquivo: `src/algorithms/dijkstra.py`.
 
-Dijkstra deverá utilizar os pesos das conexões para encontrar um caminho de menor custo. Sua descrição final deverá refletir a implementação efetivamente adotada e o formato de retorno definido no projeto.
+Dijkstra utiliza os pesos das conexões para encontrar um caminho de menor custo. A opção `retornar_visitados=True` fornece a ordem de expansão à API sem alterar o retorno padrão usado pelos testes existentes.
 
 ## 7. Fluxo de execução lógico
 
@@ -114,9 +118,11 @@ O fluxo esperado para uma operação de busca é:
 4. Executar o algoritmo correspondente.
 5. Reconstruir o caminho quando houver rota.
 6. Retornar o resultado ou indicar que não existe caminho.
-7. Permitir que a camada responsável pela apresentação exiba o resultado, caso exista uma interface de execução.
+7. A camada Flask expõe o resultado em JSON para a interface web.
 
 A lógica de busca não deve ser duplicada na interface.
+
+O endpoint `GET /rota` chama as funções Python de BFS, DFS ou Dijkstra. Os endpoints `/estacoes` e `/conexoes` consultam e alteram a mesma instância de `Grafo`.
 
 ## 8. Testes automatizados
 
@@ -140,8 +146,4 @@ Essa organização reduz o acoplamento: alterações internas na representação
 
 ## 10. Estado e evolução da arquitetura
 
-A classe `Grafo`, a BFS e a DFS fazem parte da implementação já relatada como existente no projeto.
-
-A implementação do Dijkstra, uma eventual camada de aplicação e outras partes da arquitetura devem ser registradas como concluídas somente após a verificação dos arquivos, dos testes e dos requisitos correspondentes.
-
-A arquitetura deverá ser revisada quando os algoritmos restantes forem integrados e quando a implementação final permitir confirmar o fluxo completo de execução.
+A classe `Grafo`, BFS, DFS, Dijkstra e a camada de apresentação Flask estão presentes nesta cópia integrada. A aplicação serve `index.html`, `style.css` e `app.js`; as alterações no grafo permanecem em memória enquanto o servidor estiver executando.
