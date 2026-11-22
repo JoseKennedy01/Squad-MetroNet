@@ -243,7 +243,7 @@ Na `main`, a integração das branches está pronta para confirmação no GitHub
 - [x] Análise de complexidade e artefatos experimentais presentes
 - [x] Revisão visual da interface e ensaio final
 - [x] Integração das branches após decisão da equipe
-- [ ] Apresentação e defesa individual
+- [X] Apresentação e defesa individual
 - [ ] Release `v1.0.0` (aguarda revisão e autorização da equipe)
 
 Execução de revisão integrada em 21/11/2026: `python -m pytest -q -p no:cacheprovider` — **144 testes aprovados**. `node --check app.js` e `git diff --cached --check` passaram. O tempo informado corresponde à suíte, não ao desempenho isolado dos algoritmos.
